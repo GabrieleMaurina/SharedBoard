@@ -1,0 +1,92 @@
+<html>
+	<head>
+		<title>SharedBoard</title>
+		<script src="/socket.io.js"></script>
+		<style>
+			canvas
+			{
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translateX(-50%) translateY(-50%);
+			}
+		</style>
+	</head>
+	<body>
+		<canvas id="canvas" width="1000" height="700" style="border:1px solid #000000;"></canvas>
+		<script>
+			const DRAW_FPS = 60;
+			const MSG_FPS = 20;
+			
+			var lines = [];
+			
+			var canvas = document.getElementById("canvas");
+			var ctx = canvas.getContext("2d");
+			
+			ctx.lineWidth = 3;
+			
+			var drawing = false;
+			var mousePos = { x:0, y:0 };
+			var lastPos = mousePos;
+			
+			canvas.addEventListener("mousedown", function (e) {
+				mousePos = getMousePos(e);
+				lastPos = mousePos;
+				drawing = true;
+			}, false);
+			
+			canvas.addEventListener("mouseup", function (e) {
+				drawing = false;
+			}, false);
+			
+			canvas.addEventListener("mousemove", function (e) {
+				mousePos = getMousePos(e);
+			}, false);
+
+			function getMousePos(e) {
+				var rect = canvas.getBoundingClientRect();
+				return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+			}
+			
+			function renderCanvas() {
+				if (drawing && lastPos != mousePos) {
+					ctx.moveTo(lastPos.x, lastPos.y);
+					ctx.lineTo(mousePos.x, mousePos.y);
+					ctx.stroke();
+					
+					lines.push({x0 : lastPos.x, y0 : lastPos.y, x1 : mousePos.x, y1 : mousePos.y});
+					
+					lastPos = mousePos;
+				}
+			}
+			
+			(function drawLoop () {
+				window.setTimeout(drawLoop, 1000 / DRAW_FPS);
+				renderCanvas();
+			})();
+			
+			var socket = io.connect('https://sharedboardgm.herokuapp.com/');
+			socket.on('lines', function(lines){
+				for (i in lines)
+				{
+					ctx.moveTo(lines[i].x0, lines[i].y0);
+					ctx.lineTo(lines[i].x1, lines[i].y1);
+					ctx.stroke();
+				}
+			});
+			
+			function sendLines(){
+				var toSend = lines;
+				lines = [];
+				if(toSend.length > 0){
+					socket.emit('lines', toSend);
+				}
+			}
+			
+			(function msgLoop () {
+				window.setTimeout(msgLoop, 1000 / MSG_FPS);
+				sendLines();
+			})();
+		</script>
+	</body>
+</html>
