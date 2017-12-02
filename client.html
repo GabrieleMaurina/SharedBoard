@@ -51,11 +51,10 @@
 			
 			
 			canvas.addEventListener("touchstart", function (e) {
-				mousePos = getTouchPos(canvas, e);
-				var touch = e.touches[0];
+				console.log('touch');
 				var mouseEvent = new MouseEvent("mousedown", {
-					clientX: touch.clientX,
-					clientY: touch.clientY
+					clientX: e.touches[0].clientX,
+					clientY: e.touches[0].clientY
 				});
 				canvas.dispatchEvent(mouseEvent);
 			}, false);
@@ -73,13 +72,8 @@
 				});
 				canvas.dispatchEvent(mouseEvent);
 			}, false);
-
-			function getTouchPos(touchEvent) {
-				var rect = canvas.getBoundingClientRect();
-				return { x: touchEvent.touches[0].clientX - rect.left, y: touchEvent.touches[0].clientY - rect.top };
-			}
 			
-			document.body.addEventListener("touchstart", function (e) {
+			/*document.body.addEventListener("touchstart", function (e) {
 				if (e.target == canvas) {
 					e.preventDefault();
 				}
@@ -95,7 +89,7 @@
 				if (e.target == canvas) {
 					e.preventDefault();
 				}
-			}, false);
+			}, false);*/
 			
 			
 			
