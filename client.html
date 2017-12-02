@@ -3,24 +3,36 @@
 		<title>SharedBoard</title>
 		<script src="/socket.io.js"></script>
 		<style>
-			canvas
-			{
-				position: absolute;
-				top: 50%;
-				left: 50%;
-				transform: translateX(-50%) translateY(-50%);
+			html,
+			body {
+				margin: 0;
+				height: 100%;
+				overflow: hidden;
 			}
 		</style>
 	</head>
 	<body>
-		<canvas id="canvas" width="1000" height="700" style="border:1px solid #000000;"></canvas>
+		<canvas id="canvas"></canvas>
 		<script>
 			const DRAW_FPS = 60;
 			const MSG_FPS = 20;
 			
+			const WIDTH = 1900;
+			const HEIGHT = 1000;
+			
+			const X_RATIO = window.innerWidth / WIDTH;
+			const Y_RATIO = window.innerHeight / HEIGHT;
+			
 			var lines = [];
 			
 			var canvas = document.getElementById("canvas");
+			
+			canvas.style.width = window.innerWidth;
+			canvas.style.height = window.innerHeight; 
+			
+			canvas.width = WIDTH;
+			canvas.height = HEIGHT;
+			
 			var ctx = canvas.getContext("2d");
 			
 			ctx.lineWidth = 3;
@@ -45,7 +57,7 @@
 
 			function getMousePos(e) {
 				var rect = canvas.getBoundingClientRect();
-				return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+				return { x: (e.clientX - rect.left) / X_RATIO, y: (e.clientY - rect.top) / Y_RATIO };
 			}
 			
 			
@@ -73,7 +85,7 @@
 				canvas.dispatchEvent(mouseEvent);
 			}, false);
 			
-			/*document.body.addEventListener("touchstart", function (e) {
+			document.body.addEventListener("touchstart", function (e) {
 				if (e.target == canvas) {
 					e.preventDefault();
 				}
@@ -89,7 +101,7 @@
 				if (e.target == canvas) {
 					e.preventDefault();
 				}
-			}, false);*/
+			}, false);
 			
 			
 			
