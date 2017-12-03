@@ -6,7 +6,7 @@ var io = require('socket.io')(server);
 app.use(express.static('resources'));
 
 app.get('/', function(req, res) {
-    res.sendFile(__dirname + '/client.html');
+    res.sendFile(__dirname + '/resources/client.html');
 });
 
 io.on('connect', function(socket){
