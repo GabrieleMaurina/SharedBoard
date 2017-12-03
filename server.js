@@ -13,6 +13,15 @@ io.on('connect', function(socket){
 	socket.on('lines', function(lines){
 		socket.broadcast.emit('lines', lines);
 	});
+	
+	socket.on('msg', function(msg){
+		if(msg != ''){
+			if(msg.length > 300){
+				msg = msg.substr(0, 300);
+			}
+			io.emit('msg', msg);
+		}
+	});
 });
 
 

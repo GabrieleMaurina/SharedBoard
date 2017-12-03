@@ -1,3 +1,7 @@
+const WEB_SERVER_ADDRESS = 'https://sharedboardgm.herokuapp.com';//'localhost';//
+
+const CHAT_LINES = 10;
+
 const MSG_PER_SEC = 20;
 
 const WIDTH = 2000;
@@ -5,7 +9,7 @@ const HEIGHT = 2000;
 
 const LINE_WIDTH = 4;
 
-var canvas = document.getElementById("canvas");
+var canvas = document.getElementById('canvas');
 
 var X_RATIO = 1;
 var Y_RATIO = 1;
@@ -14,12 +18,10 @@ var ctx = null;
 canvas.width = WIDTH;
 canvas.height = HEIGHT;
 
-ctx = canvas.getContext("2d");
+ctx = canvas.getContext('2d');
 ctx.lineWidth = LINE_WIDTH;
 
 function resizeCanvas(){
-	
-	
 	X_RATIO = window.innerWidth / WIDTH;
 	Y_RATIO = window.innerHeight / HEIGHT;
 
@@ -36,7 +38,8 @@ var drawing = false;
 var p = { x : 0, y : 0};
 var lP = p;
 
-canvas.addEventListener("mousedown", function (e) {
+canvas.addEventListener('mousedown', function (e) {
+	submitChat();
 	drawing = true;
 	p = getMousePos(e);
 	lP = p;
@@ -44,12 +47,12 @@ canvas.addEventListener("mousedown", function (e) {
 	lines.push([p]);
 }, false);
 
-canvas.addEventListener("mouseup", function (e) {
+canvas.addEventListener('mouseup', function (e) {
 	drawing = false;
 	point(p);
 }, false);
 
-canvas.addEventListener("mousemove", function (e) {
+canvas.addEventListener('mousemove', function (e) {
 	if(drawing)
 	{
 		pTmp = getMousePos(e);
@@ -74,41 +77,41 @@ function getMousePos(e) {
 	return { x: Math.round((e.clientX - rect.left) / X_RATIO), y: Math.round((e.clientY - rect.top) / Y_RATIO) };
 }
 
-canvas.addEventListener("touchstart", function (e) {
-	var mouseEvent = new MouseEvent("mousedown", {
+canvas.addEventListener('touchstart', function (e) {
+	var mouseEvent = new MouseEvent('mousedown', {
 		clientX: e.touches[0].clientX,
 		clientY: e.touches[0].clientY
 	});
 	canvas.dispatchEvent(mouseEvent);
 }, false);
 
-canvas.addEventListener("touchend", function (e) {
-	var mouseEvent = new MouseEvent("mouseup", {});
+canvas.addEventListener('touchend', function (e) {
+	var mouseEvent = new MouseEvent('mouseup', {});
 	canvas.dispatchEvent(mouseEvent);
 }, false);
 
-canvas.addEventListener("touchmove", function (e) {
+canvas.addEventListener('touchmove', function (e) {
 	var touch = e.touches[0];
-	var mouseEvent = new MouseEvent("mousemove", {
+	var mouseEvent = new MouseEvent('mousemove', {
 		clientX: touch.clientX,
 		clientY: touch.clientY
 	});
 	canvas.dispatchEvent(mouseEvent);
 }, false);
 
-document.body.addEventListener("touchstart", function (e) {
+document.body.addEventListener('touchstart', function (e) {
 	if (e.target == canvas) {
 		e.preventDefault();
 	}
 }, false);
 
-document.body.addEventListener("touchend", function (e) {
+document.body.addEventListener('touchend', function (e) {
 	if (e.target == canvas) {
 		e.preventDefault();
 	}
 }, false);
 
-document.body.addEventListener("touchmove", function (e) {
+document.body.addEventListener('touchmove', function (e) {
 	if (e.target == canvas) {
 		e.preventDefault();
 	}
@@ -116,7 +119,7 @@ document.body.addEventListener("touchmove", function (e) {
 
 
 
-var socket = io.connect('https://sharedboardgm.herokuapp.com/');//io.connect('localhost');//
+var socket = io.connect(WEB_SERVER_ADDRESS);
 socket.on('lines', function(lines){
 	for (i in lines) {
 		for(var j = 0; j < lines[i].length - 1; j++) {
@@ -154,4 +157,69 @@ function line(p0, p1)
 	ctx.moveTo(p0.x, p0.y);
 	ctx.lineTo(p1.x, p1.y);
 	ctx.stroke();
+}
+
+
+
+var chatText = document.getElementById('chat_text');
+var chatInput = document.getElementById('chat_input');
+chatInput.style.visibility = 'hidden';
+var typing = false;
+var chatLines = [];
+
+document.onkeypress = function(e) {
+	if(!typing){
+		if (e.key == 'c'){
+			clearScreen();
+		}
+		if (e.key == 'Enter'){
+			showChat();
+		}
+	}
+	else{
+		if (e.key == 'Enter'){
+			submitChat();
+		}
+	}
+};
+
+function submitChat(){
+	typing = false;
+	chatInput.style.visibility = 'hidden';
+	if(chatInput.value != ''){
+		socket.emit('msg', chatInput.value);
+	}
+	chatInput.value = '';
+}
+
+function showChat(){
+	typing = true;
+	chatInput.value = '';
+	chatInput.style.visibility = 'visible';
+	chatInput.focus();
+}
+
+function displayChatText(){
+	chatText.innerHTML = chatLines.join('<br>');
+}
+
+socket.on('msg', function(msg){
+	if(msg != ''){
+		if(msg.length > 300){
+			msg = msg.substr(0, 300);
+		}
+		chatLines.push(msg);
+		if(chatLines.length > CHAT_LINES){
+			chatLines.splice(0, 1);
+		}
+		displayChatText();
+	}
+});
+
+function clearScreen(){
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	ctx.beginPath();
+	
+	chatLines = [];
+	displayChatText();
 }

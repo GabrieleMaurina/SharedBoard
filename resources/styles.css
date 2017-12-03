@@ -4,12 +4,24 @@ html, body {
 	overflow: hidden;
 }
 
-label{
+#chat{
 	position: fixed;
-	white-space: pre-wrap;
+	bottom: 10px;
+	right: 10px;
 }
 
-#chat{
-	bottom: 200px;
-	right: 200px;
+#chat_input{
+	float: right;
 }
+
+#chat_text{
+	max-width: 200px;
+	word-wrap: break-word;
+}
+
+#title{
+	position: fixed;
+	top: 10px;
+	left: 10px;
+}
+
