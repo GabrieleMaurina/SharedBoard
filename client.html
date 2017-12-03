@@ -121,7 +121,7 @@
 			
 			
 			
-			var socket = io.connect('localhost');//io.connect('https://sharedboardgm.herokuapp.com/');
+			var socket = io.connect('https://sharedboardgm.herokuapp.com/');//io.connect('localhost');
 			socket.on('lines', function(lines){
 				console.log(lines);
 				for (i in lines) {
