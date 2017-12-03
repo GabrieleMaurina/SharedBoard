@@ -1,4 +1,4 @@
-const WEB_SERVER_ADDRESS = 'https://sharedboardgm.herokuapp.com';//'localhost';//
+const WEB_SERVER_ADDRESS = 'localhost';//'https://sharedboardgm.herokuapp.com';//
 
 const CHAT_LINES = 10;
 
@@ -39,7 +39,7 @@ var p = { x : 0, y : 0};
 var lP = p;
 
 canvas.addEventListener('mousedown', function (e) {
-	submitChat();
+	hideChat();
 	drawing = true;
 	p = getMousePos(e);
 	lP = p;
@@ -167,34 +167,40 @@ chatInput.style.visibility = 'hidden';
 var typing = false;
 var chatLines = [];
 
-document.onkeypress = function(e) {
-	if(!typing){
-		if (e.key == 'c'){
-			clearScreen();
-		}
+document.onkeydown = function(e) {
+	if(typing){
 		if (e.key == 'Enter'){
-			showChat();
+			submitChat();
+		}
+		else if (e.key == 'Escape'){
+			hideChat();
 		}
 	}
 	else{
-		if (e.key == 'Enter'){
-			submitChat();
+		if (e.key == 'c'){
+			clearScreen();
+		}
+		else if (e.key == 'Enter'){
+			showChat();
 		}
 	}
 };
 
-function submitChat(){
+function hideChat(){
 	typing = false;
 	chatInput.style.visibility = 'hidden';
+}
+
+function submitChat(){
+	hideChat();
 	if(chatInput.value != ''){
-		socket.emit('msg', chatInput.value);
+		socket.emit('msg', stripTags(chatInput.value));
 	}
 	chatInput.value = '';
 }
 
 function showChat(){
 	typing = true;
-	chatInput.value = '';
 	chatInput.style.visibility = 'visible';
 	chatInput.focus();
 }
@@ -205,6 +211,7 @@ function displayChatText(){
 
 socket.on('msg', function(msg){
 	if(msg != ''){
+		msg = stripTags(msg);
 		if(msg.length > 300){
 			msg = msg.substr(0, 300);
 		}
@@ -222,4 +229,12 @@ function clearScreen(){
 	
 	chatLines = [];
 	displayChatText();
+}
+
+function stripTags(str){
+	var div = document.createElement("div");
+	div.innerHTML = str;
+	str = div.textContent || div.innerText || "";
+	div.remove();
+	return str;
 }
