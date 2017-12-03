@@ -29,3 +29,14 @@ html, body{
 	z-index:-1;
 }
 
+#clients_count{
+	position: fixed;
+	top: 10px;
+	right: 10px;
+	pointer-events: none;
+	z-index:-1;
+}
+
+#clients_count_text{
+	text-align: center;
+}

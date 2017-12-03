@@ -1,6 +1,6 @@
 var express = require('express');
 var app = express();
-var server = require('http').createServer(app); 
+var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 var striptags = require('striptags');
 
@@ -24,7 +24,16 @@ io.on('connect', function(socket){
 			io.emit('msg', msg);
 		}
 	});
+	
+	socket.on('disconnect', function(){
+		sendClientsCount();
+	});
+	
+	sendClientsCount();
 });
 
+function sendClientsCount(){
+	io.emit('clientsCount', io.engine.clientsCount);
+}
 
 server.listen((process.env.PORT || 80));

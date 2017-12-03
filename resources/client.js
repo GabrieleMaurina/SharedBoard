@@ -238,3 +238,9 @@ function stripTags(str){
 	div.remove();
 	return str;
 }
+
+var clientsCountText = document.getElementById('clients_count_text');
+
+socket.on('clientsCount', function(clientsCount){
+	clientsCountText.innerHTML = clientsCount;
+});
