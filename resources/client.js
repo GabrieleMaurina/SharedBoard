@@ -1,4 +1,4 @@
-const WEB_SERVER_ADDRESS = 'localhost';//'https://sharedboardgm.herokuapp.com';//
+const WEB_SERVER_ADDRESS = 'https://sharedboardgm.herokuapp.com';//'localhost';//
 
 const CHAT_LINES = 10;
 
