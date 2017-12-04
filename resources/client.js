@@ -1,3 +1,5 @@
+const WEB_SERVER_ADDRESS = 'https://sharedboardgm.herokuapp.com';//'localhost';//
+
 const CHAT_LINES = 10;
 
 const MSG_PER_SEC = 20;

@@ -1,1 +1,0 @@
-const WEB_SERVER_ADDRESS = 'https://sharedboardgm.herokuapp.com';//'localhost';//
