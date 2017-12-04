@@ -29,7 +29,7 @@ html, body{
 	z-index:-1;
 }
 
-#clients_count{
+#clients{
 	position: fixed;
 	top: 10px;
 	right: 10px;
@@ -37,6 +37,7 @@ html, body{
 	z-index:-1;
 }
 
-#clients_count_text{
-	text-align: center;
+#names{
+	max-width: 200px;
+	word-wrap: break-word;
 }

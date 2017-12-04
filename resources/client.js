@@ -1,5 +1,8 @@
 const WEB_SERVER_ADDRESS = 'https://sharedboardgm.herokuapp.com';//'localhost';//
 
+const MAX_MSG_LENGTH = 300;
+const MAX_NAME_LENGTH = 20;
+
 const CHAT_LINES = 10;
 
 const MSG_PER_SEC = 20;
@@ -39,7 +42,7 @@ var p = { x : 0, y : 0};
 var lP = p;
 
 canvas.addEventListener('mousedown', function (e) {
-	hideChat();
+	fucusCanvas();
 	drawing = true;
 	p = getMousePos(e);
 	lP = p;
@@ -167,7 +170,7 @@ chatInput.style.visibility = 'hidden';
 var typing = false;
 var chatLines = [];
 
-document.onkeydown = function(e) {
+document.onkeyup = function(e) {
 	if(typing){
 		if (e.key == 'Enter'){
 			submitChat();
@@ -176,12 +179,20 @@ document.onkeydown = function(e) {
 			hideChat();
 		}
 	}
+	else if(naming){
+		if (e.key == 'Enter' || e.key == 'Escape'){
+			submitName();
+		}
+	}
 	else{
-		if (e.key == 'c'){
+		if (e.key == 'c' || e.key == 'C'){
 			clearScreen();
 		}
 		else if (e.key == 'Enter'){
 			showChat();
+		}
+		else if (e.key == 'n' || e.key == 'N'){
+			showName();
 		}
 	}
 };
@@ -193,6 +204,7 @@ function hideChat(){
 
 function submitChat(){
 	hideChat();
+	console.log("asdf " + chatInput.value[0])
 	if(chatInput.value != ''){
 		socket.emit('msg', stripTags(chatInput.value));
 	}
@@ -212,8 +224,8 @@ function displayChatText(){
 socket.on('msg', function(msg){
 	if(msg != ''){
 		msg = stripTags(msg);
-		if(msg.length > 300){
-			msg = msg.substr(0, 300);
+		if(msg.length > MAX_MSG_LENGTH){
+			msg = msg.substr(0, MAX_MSG_LENGTH);
 		}
 		chatLines.push(msg);
 		if(chatLines.length > CHAT_LINES){
@@ -239,8 +251,40 @@ function stripTags(str){
 	return str;
 }
 
-var clientsCountText = document.getElementById('clients_count_text');
+var clientsCountText = document.getElementById('clients_count');
 
 socket.on('clientsCount', function(clientsCount){
-	clientsCountText.innerHTML = clientsCount;
+	clientsCountText.innerHTML = 'Clients ' + clientsCount;
 });
+
+var namesText = document.getElementById('names');
+var nameInput = document.getElementById('name_input');
+var naming = false;
+var lastName = '';
+
+socket.on('names', function(names){
+	namesText.innerHTML = names.slice(0, 10).join('<br>');
+});
+
+function showName(){
+	naming = true;
+	nameInput.focus();
+}
+
+function submitName(){
+	naming = false;
+	nameInput.blur();
+	if(nameInput.value != lastName){
+		socket.emit('name', nameInput.value);
+		lastName = nameInput.value;
+	}
+}
+
+function fucusCanvas(){
+	if(typing){
+		hideChat();
+	}
+	if(naming){
+		submitName();
+	}
+}
