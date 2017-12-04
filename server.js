@@ -35,15 +35,16 @@ io.on('connect', function(socket){
 	});
 	
 	socket.on('name', function(name){
-		if(name != ''){
-			name = striptags(name);
-			if(name.length > MAX_NAME_LENGTH){
-				msg = msg.substr(0, MAX_NAME_LENGTH);
+		name = striptags(name);
+		if(name.length > MAX_NAME_LENGTH){
+			msg = msg.substr(0, MAX_NAME_LENGTH);
+		}
+		if(names[socket.id] != name){
+			names[socket.id] = name;
+			if(name == ''){
+				delete names[socket.id];
 			}
-			if(names[socket.id] != name){
-				names[socket.id] = name;
-				sendNames();
-			}
+			sendNames();
 		}
 	});
 	

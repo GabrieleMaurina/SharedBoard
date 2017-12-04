@@ -257,8 +257,17 @@ socket.on('clientsCount', function(clientsCount){
 	clientsCountText.innerHTML = 'Clients: ' + clientsCount;
 });
 
+const NAME_COOKIE = 'name';
+
 var namesText = document.getElementById('names');
 var nameInput = document.getElementById('name_input');
+
+var name =  Cookies.get(NAME_COOKIE, true);
+if(name != ''){
+	nameInput.value = name;
+	submitName();
+}
+
 nameInput.style.display = 'none';
 var naming = false;
 var lastName = '';
@@ -280,6 +289,7 @@ function submitName(){
 	if(nameInput.value != lastName){
 		socket.emit('name', nameInput.value);
 		lastName = nameInput.value;
+		Cookies.set(NAME_COOKIE, lastName, {expiry : 60 * 60 * 24 * 365});
 	}
 }
 
