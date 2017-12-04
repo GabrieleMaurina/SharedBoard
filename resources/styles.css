@@ -21,6 +21,10 @@ html, body{
 	word-wrap: break-word;
 }
 
+#chat_title{
+	text-align: center;
+}
+
 #title{
 	position: fixed;
 	top: 10px;
@@ -29,12 +33,20 @@ html, body{
 	z-index:-1;
 }
 
+#title_text{
+	text-align: center;
+}
+
 #clients{
 	position: fixed;
 	top: 10px;
 	right: 10px;
 	pointer-events: none;
 	z-index:-1;
+}
+
+#clients_count{
+	text-align: center;
 }
 
 #names{

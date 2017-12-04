@@ -26,7 +26,11 @@ io.on('connect', function(socket){
 			if(msg.length > MAX_MSG_LENGTH){
 				msg = msg.substr(0, MAX_MSG_LENGTH);
 			}
-			io.emit('msg', msg);
+			var name = 'Unknown';
+			if(names[socket.id]){
+				name = names[socket.id];
+			}
+			io.emit('msg', name + ': ' + msg);
 		}
 	});
 	

@@ -166,7 +166,7 @@ function line(p0, p1)
 
 var chatText = document.getElementById('chat_text');
 var chatInput = document.getElementById('chat_input');
-chatInput.style.visibility = 'hidden';
+chatInput.style.display = 'none';
 var typing = false;
 var chatLines = [];
 
@@ -199,7 +199,7 @@ document.onkeyup = function(e) {
 
 function hideChat(){
 	typing = false;
-	chatInput.style.visibility = 'hidden';
+	chatInput.style.display = 'none';
 }
 
 function submitChat(){
@@ -213,7 +213,7 @@ function submitChat(){
 
 function showChat(){
 	typing = true;
-	chatInput.style.visibility = 'visible';
+	chatInput.style.display = 'initial';
 	chatInput.focus();
 }
 
@@ -259,6 +259,7 @@ socket.on('clientsCount', function(clientsCount){
 
 var namesText = document.getElementById('names');
 var nameInput = document.getElementById('name_input');
+nameInput.style.display = 'none';
 var naming = false;
 var lastName = '';
 
@@ -268,11 +269,13 @@ socket.on('names', function(names){
 
 function showName(){
 	naming = true;
+	nameInput.style.display = 'initial';
 	nameInput.focus();
 }
 
 function submitName(){
 	naming = false;
+	nameInput.style.display = 'none';
 	nameInput.blur();
 	if(nameInput.value != lastName){
 		socket.emit('name', nameInput.value);
