@@ -204,7 +204,6 @@ function hideChat(){
 
 function submitChat(){
 	hideChat();
-	console.log("asdf " + chatInput.value[0])
 	if(chatInput.value != ''){
 		socket.emit('msg', stripTags(chatInput.value));
 	}
@@ -301,3 +300,6 @@ function fucusCanvas(){
 		submitName();
 	}
 }
+
+var room = stripTags(window.location.pathname.replace('/', ''));
+socket.emit('join', room);

@@ -9,15 +9,34 @@ var striptags = require('striptags');
 
 app.use(express.static('resources'));
 
+app.get('/admin', function(req, res) {
+    res.sendFile(__dirname + '/resources/admin.html');
+});
+
 app.get('/', function(req, res) {
+    res.sendFile(__dirname + '/resources/client.html');
+});
+
+app.get('/:page', function(req, res) {
     res.sendFile(__dirname + '/resources/client.html');
 });
 
 var names = {};
 
 io.on('connect', function(socket){
+	socket.on('join', function(room){
+		var oldRoom = Object.keys(socket.rooms)[0];
+		socket.leave(oldRoom);
+		socket.join(room);
+		
+		sendNames(room);
+		sendClientsCount(room);
+		sendNames(oldRoom);
+		sendClientsCount(oldRoom);
+	});
+	
 	socket.on('lines', function(lines){
-		socket.broadcast.emit('lines', lines);
+		socket.broadcast.to(Object.keys(socket.rooms)[0]).emit('lines', lines);
 	});
 	
 	socket.on('msg', function(msg){
@@ -27,10 +46,10 @@ io.on('connect', function(socket){
 				msg = msg.substr(0, MAX_MSG_LENGTH);
 			}
 			var name = 'Unknown';
-			if(names[socket.id]){
-				name = names[socket.id];
+			if(socket.nickname){
+				name = socket.nickname;
 			}
-			io.emit('msg', name + ': ' + msg);
+			io.sockets.in(Object.keys(socket.rooms)[0]).emit('msg', name + ': ' + msg);
 		}
 	});
 	
@@ -39,31 +58,45 @@ io.on('connect', function(socket){
 		if(name.length > MAX_NAME_LENGTH){
 			msg = msg.substr(0, MAX_NAME_LENGTH);
 		}
-		if(names[socket.id] != name){
-			names[socket.id] = name;
+		
+		if(socket.nickname != name){
+			socket.nickname = name;
 			if(name == ''){
-				delete names[socket.id];
+				delete socket.nickname;
 			}
-			sendNames();
+			sendNames(Object.keys(socket.rooms)[0]);
 		}
 	});
 	
-	socket.on('disconnect', function(){
-		sendClientsCount();
-		delete names[socket.id];
-		sendNames();
+	var lastRoom = '';
+	socket.on('disconnecting', function(){
+		lastRoom = Object.keys(socket.rooms)[0];
 	});
 	
-	sendNames();
-	sendClientsCount();
+	socket.on('disconnect', function(){
+		sendNames(lastRoom);
+		sendClientsCount(lastRoom);
+	});
 });
 
-function sendClientsCount(){
-	io.emit('clientsCount', io.engine.clientsCount);
+function sendClientsCount(room){
+	io.in(room).clients(function(err, clients){
+		io.sockets.in(room).emit('clientsCount', clients.length);
+	});
 }
 
-function sendNames(){
-	io.emit('names', Object.values(names));
+function sendNames(room){
+	io.in(room).clients(function(err, clients){
+		var names = [];
+		for(i in clients){
+			var nickname = io.sockets.connected[clients[i]].nickname;
+			if(nickname){
+				names.push(nickname);
+			}
+		}
+		
+		io.sockets.in(room).emit('names', names);
+	});
 }
 
 server.listen((process.env.PORT || 80));
