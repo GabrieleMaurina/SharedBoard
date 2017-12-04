@@ -254,7 +254,7 @@ function stripTags(str){
 var clientsCountText = document.getElementById('clients_count');
 
 socket.on('clientsCount', function(clientsCount){
-	clientsCountText.innerHTML = 'Clients ' + clientsCount;
+	clientsCountText.innerHTML = 'Clients: ' + clientsCount;
 });
 
 var namesText = document.getElementById('names');
