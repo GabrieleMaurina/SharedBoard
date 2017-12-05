@@ -44,10 +44,7 @@ io.on('connect', function(socket){
 			if(msg.length > MAX_MSG_LENGTH){
 				msg = msg.substr(0, MAX_MSG_LENGTH);
 			}
-			var name = 'Unknown';
-			if(socket.nickname){
-				name = socket.nickname;
-			}
+			var name = socket.nickname || 'Unknown';
 			io.sockets.in(Object.keys(socket.rooms)[0]).emit('msg', name + ': ' + msg);
 		}
 	});
@@ -119,11 +116,8 @@ function sendUpdate(){
 	
 	for(i in io.sockets.connected){
 		var c = {};
-		c.name = io.sockets.connected[i].nickname;
-		if(!c.name){
-			c.name = '';
-		}
-		c.ip = io.sockets.connected[i].handshake.address;//.replace('::ffff:', '');
+		c.name = io.sockets.connected[i].nickname || '';
+		c.ip = (io.sockets.connected[i].handshake.headers['x-forwarded-for'] || io.sockets.connected[i].handshake.address).replace('::ffff:', '');
 		c.room = Object.keys(io.sockets.connected[i].rooms)[0];
 		clients.push(c);
 	}
