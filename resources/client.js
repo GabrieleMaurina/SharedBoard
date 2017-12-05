@@ -1,5 +1,6 @@
 const MAX_MSG_LENGTH = 300;
 const MAX_NAME_LENGTH = 20;
+const MAX_ROOM_LENGTH = 10;
 
 const CHAT_LINES = 10;
 
@@ -182,6 +183,14 @@ document.onkeyup = function(e) {
 			submitName();
 		}
 	}
+	else if(rooming){
+		if (e.key == 'Enter'){
+			submitRoom();
+		}
+		else if (e.key == 'Escape'){
+			hideRoom();
+		}
+	}
 	else{
 		if (e.key == 'c' || e.key == 'C'){
 			clearScreen();
@@ -191,6 +200,9 @@ document.onkeyup = function(e) {
 		}
 		else if (e.key == 'n' || e.key == 'N'){
 			showName();
+		}
+		else if (e.key == 'r' || e.key == 'R'){
+			showRoom();
 		}
 	}
 };
@@ -238,6 +250,8 @@ function clearScreen(){
 	
 	chatLines = [];
 	displayChatText();
+	
+	roomsInput.value = '';
 }
 
 function stripTags(str){
@@ -267,7 +281,7 @@ if(name != ''){
 
 nameInput.style.display = 'none';
 var naming = false;
-var lastName = '';
+var name = '';
 
 socket.on('names', function(names){
 	namesText.innerHTML = names.slice(0, 10).join('<br>');
@@ -283,10 +297,17 @@ function submitName(){
 	naming = false;
 	nameInput.style.display = 'none';
 	nameInput.blur();
-	if(nameInput.value != lastName){
-		socket.emit('name', nameInput.value);
-		lastName = nameInput.value;
-		Cookies.set(NAME_COOKIE, lastName, {expiry : 60 * 60 * 24 * 365});
+	
+	var newName = nameInput.value;
+	newName = stripTags(newName);
+	if(newName.length > MAX_NAME_LENGTH){
+		newName = newName.substr(0, MAX_NAME_LENGTH);
+	}
+	
+	if(newName != name){
+		name = newName;
+		socket.emit('name', name);
+		Cookies.set(NAME_COOKIE, name, {expiry : 60 * 60 * 24 * 365});
 	}
 }
 
@@ -301,3 +322,46 @@ function fucusCanvas(){
 
 var room = stripTags(window.location.pathname.replace('/', ''));
 socket.emit('join', room);
+document.title = 'SharedBoard - ' + (room || 'HOME');
+
+var roomsTitle = document.getElementById('rooms_title');
+var roomsInstruction = document.getElementById('rooms_instruction');
+var roomsInput = document.getElementById('rooms_input');
+roomsInstruction.style.display = 'none';
+roomsInput.style.display = 'none';
+roomsTitle.innerHTML = room || 'HOME';
+var rooming = false;
+
+function submitRoom(){
+	rooming = false;
+	roomsInstruction.style.display = 'none';
+	roomsInput.style.display = 'none';
+	
+	var newRoom = roomsInput.value;
+	newRoom = stripTags(newRoom);
+	if(newRoom.length > MAX_ROOM_LENGTH){
+		newRoom = newRoom.substr(0, MAX_ROOM_LENGTH);
+	}
+	
+	if(newRoom != 'admin' && newRoom != room){
+		room = newRoom;
+		socket.emit('join', room);
+		window.history.pushState('', '', '/' + room);
+		roomsTitle.innerHTML = room || 'HOME';
+		document.title = 'SharedBoard - ' + (room || 'HOME');
+		clearScreen();
+	}
+}
+
+function showRoom(){
+	rooming = true;
+	roomsInstruction.style.display = 'initial';
+	roomsInput.style.display = 'initial';
+	roomsInput.focus();
+}
+
+function hideRoom(){
+	rooming = false;
+	roomsInstruction.style.display = 'none';
+	roomsInput.style.display = 'none';
+}

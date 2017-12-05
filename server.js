@@ -1,5 +1,6 @@
 const MAX_MSG_LENGTH = 300;
 const MAX_NAME_LENGTH = 20;
+const MAX_ROOM_LENGTH = 10;
 
 var express = require('express');
 var app = express();
@@ -29,6 +30,10 @@ io.on('connect', function(socket){
 	});
 	
 	socket.on('join', function(room){
+		room = striptags(room);
+		if(room.length > MAX_ROOM_LENGTH){
+			room = room.substr(0, MAX_MSG_LENGTH);
+		}
 		if(room != 'admin'){
 			join(socket, room);
 		}
