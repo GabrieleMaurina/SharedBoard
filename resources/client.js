@@ -276,6 +276,7 @@ var nameInput = document.getElementById('name_input');
 var name =  Cookies.get(NAME_COOKIE, true);
 if(name != ''){
 	nameInput.value = name;
+	name = null;
 	submitName();
 }
 
