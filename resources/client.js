@@ -1,5 +1,3 @@
-const WEB_SERVER_ADDRESS = 'https://sharedboardgm.herokuapp.com';//'localhost';//
-
 const MAX_MSG_LENGTH = 300;
 const MAX_NAME_LENGTH = 20;
 
@@ -122,7 +120,7 @@ document.body.addEventListener('touchmove', function (e) {
 
 
 
-var socket = io.connect(WEB_SERVER_ADDRESS);
+var socket = io.connect(ADDRESS);
 socket.on('lines', function(lines){
 	for (i in lines) {
 		for(var j = 0; j < lines[i].length - 1; j++) {

@@ -102,50 +102,33 @@ function sendNames(room){
 
 function join(socket, room){
 	var oldRoom = Object.keys(socket.rooms)[0];
-	socket.leave(oldRoom);
-	socket.join(room, function(){		
-		sendNames(room);
-		sendClientsCount(room);
-		sendNames(oldRoom);
-		sendClientsCount(oldRoom);
-		
-		sendUpdate();
+	socket.join(room, function(){
+		socket.leave(oldRoom, function(){
+			sendNames(room);
+			sendClientsCount(room);
+			sendNames(oldRoom);
+			sendClientsCount(oldRoom);
+			
+			sendUpdate();
+		});
 	});
 }
 
 function sendUpdate(){
-	var update = { clients : [], rooms : [] };
-	var rooms = {};
+	var clients = [];
 	
 	for(i in io.sockets.connected){
 		var c = {};
 		c.name = io.sockets.connected[i].nickname;
 		if(!c.name){
-			c.name = 'Unknown';
+			c.name = '';
 		}
-		c.ip = io.sockets.connected[i].handshake.address.replace('::ffff:', '');
+		c.ip = io.sockets.connected[i].handshake.address;//.replace('::ffff:', '');
 		c.room = Object.keys(io.sockets.connected[i].rooms)[0];
-		update.clients.push(c);
-		
-		if(rooms[c.room]){
-			rooms[c.room].clientsCount++;
-		}
-		else{
-			rooms[c.room] = {};
-			rooms[c.room].clientsCount = 1;
-		}
-	}
-	
-	for(i in rooms){
-		var r = {};
-		
-		r.name = i;
-		r.clientsCount = rooms[i].clientsCount;
-		
-		update.rooms.push(r);
+		clients.push(c);
 	}
 		
-	io.in('admin').emit('update', update);
+	io.in('admin').emit('update', clients);
 }
 
 server.listen((process.env.PORT || 80));

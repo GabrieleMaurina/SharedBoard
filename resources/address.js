@@ -1,0 +1,1 @@
+const ADDRESS = 'localhost';//'https://sharedboardgm.herokuapp.com';//

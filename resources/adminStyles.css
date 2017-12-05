@@ -1,0 +1,15 @@
+table {
+	margin: 100px;
+	text-align: center;
+    border-collapse: collapse;
+	float: left;
+}
+
+table, th, td {
+    border: 1px solid black;
+}
+
+div{
+	display:flex;
+	justify-content:center
+}
