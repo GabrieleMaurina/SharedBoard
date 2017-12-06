@@ -31,5 +31,47 @@ socket.on('update', function(clients){
 	roomsTitle.innerHTML = 'Rooms ' + Object.keys(rooms).length;
 	clientsList.innerHTML = clientsHTML;
 	roomsList.innerHTML = roomsHTML;
-});
 	
+	sortTable(clientsList, 2);
+	sortTable(roomsList, 0);
+});
+
+function sortTable(table, column){
+	var switching = true;
+	var shouldSwitch = false;
+	var dir = true;
+	var switched = false;
+	while (switching) {
+		shouldSwitch = false;
+		switching = false;
+		rows = table.getElementsByTagName("TR");
+		for (i = 0; i < rows.length - 1; i++) {
+			shouldSwitch = false;
+			x = rows[i].getElementsByTagName("TD")[column];
+			y = rows[i + 1].getElementsByTagName("TD")[column];
+			if (dir) {
+				if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()){
+					shouldSwitch = true;
+					break;
+				}
+			}
+			else if (!dir) {
+				if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()){
+					shouldSwitch = true;
+					break;
+				}
+			}
+		}
+		if (shouldSwitch) {
+			rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+			switching = true;
+			switched = true;
+		}
+		else {
+			if (!switched && dir) {
+				dir = false;
+				switching = true;
+			}
+		}
+	}
+}
