@@ -37,41 +37,30 @@ socket.on('update', function(clients){
 });
 
 function sortTable(table, column){
-	var switching = true;
-	var shouldSwitch = false;
 	var dir = true;
 	var switched = false;
-	while (switching) {
-		shouldSwitch = false;
-		switching = false;
-		rows = table.getElementsByTagName("TR");
-		for (i = 0; i < rows.length - 1; i++) {
-			shouldSwitch = false;
-			x = rows[i].getElementsByTagName("TD")[column];
-			y = rows[i + 1].getElementsByTagName("TD")[column];
-			if (dir) {
-				if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()){
-					shouldSwitch = true;
-					break;
-				}
-			}
-			else if (!dir) {
-				if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()){
-					shouldSwitch = true;
-					break;
+	var rows = table.getElementsByTagName("TR");
+	
+	for(var k = 0; k < 2; k++){
+		for(var i = 0; i < rows.length - 1; i++){
+			for(var j = i + 1; j < rows.length; j++){
+				var first = rows[i].getElementsByTagName("TD")[column].innerHTML.toLowerCase();
+				var second = rows[j].getElementsByTagName("TD")[column].innerHTML.toLowerCase();
+				if ((dir && first > second)	|| (!dir && first < second)){
+					switchRows(rows, i, j);
+					switched = true;
 				}
 			}
 		}
-		if (shouldSwitch) {
-			rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-			switching = true;
-			switched = true;
+		if(dir && switched){
+			k++;
 		}
-		else {
-			if (!switched && dir) {
-				dir = false;
-				switching = true;
-			}
-		}
+		dir = false;
 	}
+}
+
+function switchRows(rows, i, j){
+	var parentNode = rows[i].parentNode;
+	parentNode.insertBefore(rows[j], rows[i]);
+	parentNode.insertBefore(rows[i + 1], rows[j]);
 }
