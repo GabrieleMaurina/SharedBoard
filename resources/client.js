@@ -165,8 +165,8 @@ function line(p0, p1)
 
 var chatText = document.getElementById('chat_text');
 var chatInput = document.getElementById('chat_input');
-chatInput.style.display = 'none';
 var typing = false;
+hideChat();
 var chatLines = [];
 
 document.onkeyup = function(e) {
@@ -176,6 +176,11 @@ document.onkeyup = function(e) {
 		}
 		else if (e.key == 'Escape'){
 			hideChat();
+		}
+	}
+	else if(helping){
+		if (e.key == 'h' || e.key == 'H' || e.key == 'Enter' || e.key == 'Escape'){
+			hideHelp();
 		}
 	}
 	else if(naming){
@@ -197,6 +202,9 @@ document.onkeyup = function(e) {
 		}
 		else if (e.key == 'Enter'){
 			showChat();
+		}
+		else if (e.key == 'h' || e.key == 'H'){
+			showHelp();
 		}
 		else if (e.key == 'n' || e.key == 'N'){
 			showName();
@@ -272,17 +280,14 @@ const NAME_COOKIE = 'name';
 
 var namesText = document.getElementById('names');
 var nameInput = document.getElementById('name_input');
+var naming = false;
 
 var name =  Cookies.get(NAME_COOKIE, true);
-if(name != ''){
+if(name){
 	nameInput.value = name;
 	name = null;
-	submitName();
 }
-
-nameInput.style.display = 'none';
-var naming = false;
-var name = '';
+submitName();
 
 socket.on('names', function(names){
 	namesText.innerHTML = names.slice(0, 10).join('<br>');
@@ -305,7 +310,7 @@ function submitName(){
 		newName = newName.substr(0, MAX_NAME_LENGTH);
 	}
 	
-	if(newName != name){
+	if(newName && newName != name){
 		name = newName;
 		socket.emit('name', name);
 		Cookies.set(NAME_COOKIE, name, {expiry : 60 * 60 * 24 * 365});
@@ -319,6 +324,12 @@ function fucusCanvas(){
 	if(naming){
 		submitName();
 	}
+	if(helping){
+		hideHelp();
+	}
+	if(rooming){
+		hideRoom();
+	}
 }
 
 var room = stripTags(window.location.pathname.replace('/', ''));
@@ -328,10 +339,9 @@ document.title = 'SharedBoard - ' + (room || 'HOME');
 var roomsTitle = document.getElementById('rooms_title');
 var roomsInstruction = document.getElementById('rooms_instruction');
 var roomsInput = document.getElementById('rooms_input');
-roomsInstruction.style.display = 'none';
-roomsInput.style.display = 'none';
 roomsTitle.innerHTML = room || 'HOME';
 var rooming = false;
+hideRoom();
 
 function submitRoom(){
 	rooming = false;
@@ -384,4 +394,17 @@ function makeCursor(color) {
 	img.fillRect(HALF - LINE_WIDTH / 2, HALF - LINE_WIDTH / 2, LINE_WIDTH, LINE_WIDTH);
 	
 	canvas.style.cursor = 'url(' + cursor.toDataURL() + ') ' + HALF + ' '  + HALF + ', auto';
+}
+
+var help = document.getElementById('help');
+var helping = false;
+hideHelp();
+
+function showHelp(){
+	helping = true;
+	help.style.display = 'initial';
+}
+function hideHelp(){
+	helping = false;
+	help.style.display = 'none';
 }
