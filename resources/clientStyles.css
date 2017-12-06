@@ -8,6 +8,24 @@ canvas{
 	cursor: url(cursor.png) 16 16, crosshair;
 }
 
+td{
+	width: 30px;
+	height: 38px;
+    border: 4px solid #000000;
+	padding:0px;
+	background-color: #FFFFFF;
+}
+
+#palette{
+	//table-layout: fixed;
+	position: fixed;
+	bottom: 10px;
+	left: 50%;
+	transform: translate(-50%, 0);
+	pointer-events: none;
+	z-index:-1;
+}
+
 #chat{
 	position: fixed;
 	bottom: 10px;

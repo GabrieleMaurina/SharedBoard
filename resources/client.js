@@ -41,17 +41,21 @@ var p = { x : 0, y : 0};
 var lP = p;
 
 canvas.addEventListener('mousedown', function (e) {
-	fucusCanvas();
-	drawing = true;
-	p = getMousePos(e);
-	lP = p;
-	point(p);
-	lines.push([p]);
+	if(e.which == 1){
+		fucusCanvas();
+		drawing = true;
+		p = getMousePos(e);
+		lP = p;
+		point(p);
+		lines.push([p]);
+	}
 }, false);
 
 canvas.addEventListener('mouseup', function (e) {
-	drawing = false;
-	point(p);
+	if(e.which == 1){
+		drawing = false;
+		point(p);
+	}
 }, false);
 
 canvas.addEventListener('mousemove', function (e) {
@@ -119,8 +123,6 @@ document.body.addEventListener('touchmove', function (e) {
 	}
 }, false);
 
-
-
 var socket = io.connect(ADDRESS);
 socket.on('lines', function(lines){
 	for (i in lines) {
@@ -147,8 +149,6 @@ function sendLines(){
 	sendLines();
 })();
 
-
-
 function point(p)
 {
 	ctx.fillRect(p.x - LINE_WIDTH / 2, p.y - LINE_WIDTH / 2, LINE_WIDTH, LINE_WIDTH);
@@ -160,8 +160,6 @@ function line(p0, p1)
 	ctx.lineTo(p1.x, p1.y);
 	ctx.stroke();
 }
-
-
 
 var chatText = document.getElementById('chat_text');
 var chatInput = document.getElementById('chat_input');
@@ -377,6 +375,21 @@ function hideRoom(){
 	roomsInput.style.display = 'none';
 }
 
+var help = document.getElementById('help');
+var helping = false;
+hideHelp();
+
+function showHelp(){
+	helping = true;
+	help.style.display = 'initial';
+}
+function hideHelp(){
+	helping = false;
+	help.style.display = 'none';
+}
+
+
+
 makeCursor('#000000');
 
 function makeCursor(color) {
@@ -394,17 +407,4 @@ function makeCursor(color) {
 	img.fillRect(HALF - LINE_WIDTH / 2, HALF - LINE_WIDTH / 2, LINE_WIDTH, LINE_WIDTH);
 	
 	canvas.style.cursor = 'url(' + cursor.toDataURL() + ') ' + HALF + ' '  + HALF + ', auto';
-}
-
-var help = document.getElementById('help');
-var helping = false;
-hideHelp();
-
-function showHelp(){
-	helping = true;
-	help.style.display = 'initial';
-}
-function hideHelp(){
-	helping = false;
-	help.style.display = 'none';
 }
