@@ -4,6 +4,10 @@ html, body{
 	overflow: hidden;
 }
 
+canvas{
+	cursor: url(cursor.png) 16 16, crosshair;
+}
+
 #chat{
 	position: fixed;
 	bottom: 10px;

@@ -366,3 +366,22 @@ function hideRoom(){
 	roomsInstruction.style.display = 'none';
 	roomsInput.style.display = 'none';
 }
+
+makeCursor('#000000');
+
+function makeCursor(color) {
+	const SIZE = 32;
+	const HALF = SIZE/ 2;
+	
+	var cursor = document.createElement('canvas');
+	var img = cursor.getContext('2d');
+	
+	cursor.width = SIZE;
+	cursor.height = SIZE;
+	
+	img.fillStyle = color;
+	
+	img.fillRect(HALF - LINE_WIDTH / 2, HALF - LINE_WIDTH / 2, LINE_WIDTH, LINE_WIDTH);
+	
+	canvas.style.cursor = 'url(' + cursor.toDataURL() + ') ' + HALF + ' '  + HALF + ', auto';
+}
