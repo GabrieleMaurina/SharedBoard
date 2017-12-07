@@ -1,3 +1,6 @@
+const COLORS = ['#000000', '#7F7F7F', '#880015', '#ED1C24', '#FF8927', '#FFF200', '#22B14C', '#00A2E8', '#3F48CC', '#A349AE', '#FFFFFF'];
+const C_NAMES = { BLACK : 0, GRAY : 1, DARK_RED : 2, RED : 3, ORANGE : 4, YELLOW : 5, GREEN : 6, LIGHT_BLUE : 7, BLUE : 8, PURPLE : 9, WHITE : 10 };
+
 const MAX_MSG_LENGTH = 300;
 const MAX_NAME_LENGTH = 20;
 const MAX_ROOM_LENGTH = 10;
@@ -40,13 +43,22 @@ var drawing = false;
 var p = { x : 0, y : 0};
 var lP = p;
 
+var lastColor = COLORS[C_NAMES.WHITE];
+
 canvas.addEventListener('mousedown', function (e) {
 	if(e.which == 1){
 		fucusCanvas();
 		drawing = true;
 		p = getMousePos(e);
 		lP = p;
-		point(p);
+		
+		if(lastColor != color){
+			p.color = color;
+			lastColor = color;
+		}
+		
+		point(p, color);
+		
 		lines.push([p]);
 	}
 }, false);
@@ -54,7 +66,7 @@ canvas.addEventListener('mousedown', function (e) {
 canvas.addEventListener('mouseup', function (e) {
 	if(e.which == 1){
 		drawing = false;
-		point(p);
+		point(p, color);
 	}
 }, false);
 
@@ -66,7 +78,13 @@ canvas.addEventListener('mousemove', function (e) {
 		{
 			lP = p;
 			p = pTmp;
-			line(lP, p);
+			
+			if(lastColor != color){
+				p.color = color;
+				lastColor = color;
+			}
+			
+			line(lP, p, color);
 			
 			if(lines.length > 0) {
 				lines[lines.length - 1].push(p);
@@ -125,13 +143,24 @@ document.body.addEventListener('touchmove', function (e) {
 
 var socket = io.connect(ADDRESS);
 socket.on('lines', function(lines){
+	var c = COLORS[C_NAMES.BLACK];
 	for (i in lines) {
-		for(var j = 0; j < lines[i].length - 1; j++) {
-			line(lines[i][j], lines[i][j + 1]);
-		}
 		if(lines[i].length > 0) {
-			point(lines[i][0]);
-			point(lines[i][lines[i].length - 1]);
+			if(lines[i][0].color){
+				c = lines[i][0].color;
+			}
+			point(lines[i][0], c);
+		}
+		
+		for(var j = 0; j < lines[i].length - 1; j++) {
+			if(lines[i][j].color){
+				c = lines[i][j].color;
+			}
+			line(lines[i][j], lines[i][j + 1], c);
+		}
+		
+		if(lines[i].length > 0) {
+			point(lines[i][lines[i].length - 1], c);
 		}
 	}
 });
@@ -140,6 +169,9 @@ function sendLines(){
 	var toSend = lines;
 	lines = [];
 	if(toSend.length > 0){
+		if(!toSend[0][0].color){
+			toSend[0][0].color = color;
+		}
 		socket.emit('lines', toSend);
 	}
 }
@@ -149,16 +181,21 @@ function sendLines(){
 	sendLines();
 })();
 
-function point(p)
+function point(p, c)
 {
+	ctx.fillStyle = COLORS[c];
 	ctx.fillRect(p.x - LINE_WIDTH / 2, p.y - LINE_WIDTH / 2, LINE_WIDTH, LINE_WIDTH);
 }
 
-function line(p0, p1)
+function line(p0, p1, c)
 {
+	console.log(COLORS);
+	ctx.strokeStyle = COLORS[c];
+	ctx.beginPath();
 	ctx.moveTo(p0.x, p0.y);
 	ctx.lineTo(p1.x, p1.y);
 	ctx.stroke();
+	ctx.closePath();
 }
 
 var chatText = document.getElementById('chat_text');
@@ -388,9 +425,33 @@ function hideHelp(){
 	help.style.display = 'none';
 }
 
+var squares = [];
+for(var i = 0; i < 10; i++){
+	squares.push(document.getElementById('c' + i));
+	squares[i].style.backgroundColor = COLORS[i];
+	squares[i].style.border = '4px solid ' + COLORS[C_NAMES.WHITE];
+}
 
+var color = 1;
+highlight(0);
 
-makeCursor('#000000');
+function highlight(i){
+	if(i != color){
+		squares[color].style.border = '4px solid ' + COLORS[C_NAMES.WHITE];
+		color = i;
+		squares[color].style.border = '4px solid ' + COLORS[color];
+		makeCursor(COLORS[color]);
+	}
+}
+
+canvas.addEventListener('mousewheel', function (e) {
+	if(e.wheelDelta > 0){
+		highlight((color + 1) % 10);
+	}
+	else{
+		highlight((color + 9) % 10);
+	}
+}, false);
 
 function makeCursor(color) {
 	const SIZE = 32;
