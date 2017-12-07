@@ -43,6 +43,11 @@ io.on('connect', function(socket){
 		socket.broadcast.to(Object.keys(socket.rooms)[0]).emit('lines', lines);
 	});
 	
+	socket.on('updateCursor', function(cursor){
+		cursor.id = socket.id;
+		socket.broadcast.to(Object.keys(socket.rooms)[0]).emit('updateCursor', cursor);
+	});
+	
 	socket.on('msg', function(msg){
 		if(msg != ''){
 			msg = striptags(msg);
@@ -78,6 +83,7 @@ io.on('connect', function(socket){
 	socket.on('disconnect', function(){
 		sendNames(lastRoom);
 		sendClientsCount(lastRoom);
+		io.sockets.in(lastRoom).emit('removeCursor', socket.id);
 		sendUpdate();
 	});
 });

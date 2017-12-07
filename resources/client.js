@@ -42,8 +42,11 @@ var lines = [];
 var drawing = false;
 var p = { x : 0, y : 0};
 var lP = p;
+var mousePos = p;
+var lastMousePos = mousePos;
+var lastMouseColor = C_NAMES.WHITE;
 
-var lastColor = COLORS[C_NAMES.WHITE];
+var lastColor = C_NAMES.WHITE;
 
 canvas.addEventListener('mousedown', function (e) {
 	if(e.which == 1){
@@ -71,9 +74,10 @@ canvas.addEventListener('mouseup', function (e) {
 }, false);
 
 canvas.addEventListener('mousemove', function (e) {
+	mousePos = getMousePos(e);
 	if(drawing)
 	{
-		pTmp = getMousePos(e);
+		pTmp = mousePos;
 		if (p.x != pTmp.x || p.y != pTmp.y)
 		{
 			lP = p;
@@ -146,14 +150,14 @@ socket.on('lines', function(lines){
 	var c = COLORS[C_NAMES.BLACK];
 	for (i in lines) {
 		if(lines[i].length > 0) {
-			if(lines[i][0].color){
+			if(lines[i][0].color != undefined){
 				c = lines[i][0].color;
 			}
 			point(lines[i][0], c);
 		}
 		
 		for(var j = 0; j < lines[i].length - 1; j++) {
-			if(lines[i][j].color){
+			if(lines[i][j].color != undefined){
 				c = lines[i][j].color;
 			}
 			line(lines[i][j], lines[i][j + 1], c);
@@ -179,6 +183,7 @@ function sendLines(){
 (function msgLoop () {
 	window.setTimeout(msgLoop, 1000 / MSG_PER_SEC);
 	sendLines();
+	sendCursor();
 })();
 
 function point(p, c)
@@ -189,7 +194,6 @@ function point(p, c)
 
 function line(p0, p1, c)
 {
-	console.log(COLORS);
 	ctx.strokeStyle = COLORS[c];
 	ctx.beginPath();
 	ctx.moveTo(p0.x, p0.y);
@@ -440,7 +444,7 @@ function highlight(i){
 		squares[color].style.border = '4px solid ' + COLORS[C_NAMES.WHITE];
 		color = i;
 		squares[color].style.border = '4px solid ' + COLORS[color];
-		makeCursor(COLORS[color]);
+		makeCursor(color);
 	}
 }
 
@@ -454,18 +458,60 @@ canvas.addEventListener('mousewheel', function (e) {
 }, false);
 
 function makeCursor(color) {
+	const HALF = 16;
+	canvas.style.cursor = 'url(' + createCursor(color) + ') ' + HALF + ' '  + HALF + ', auto';
+}
+
+var cursors = {};
+socket.on('updateCursor', function(cursor){
+	const HALF = 16;
+	
+	if(cursors[cursor.id]){
+		cursors[cursor.id].outerHTML = '';
+	}
+	var img = document.createElement('img');
+	img.src = createCursor(cursor.color);
+	img.style.position = 'absolute';
+	
+	var rect = canvas.getBoundingClientRect();
+	
+	img.style.left = (cursor.x * X_RATIO + rect.left - HALF) + 'px';
+	img.style.top = (cursor.y * Y_RATIO + rect.top - HALF) + 'px';
+	
+	img.style.pointerEvents = 'none';
+	img.style.zIndex = -1;
+	
+	cursors[cursor.id] = img;
+	document.body.appendChild(img);	
+});
+
+socket.on('removeCursor', function(cursorId){
+	cursors[cursorId].outerHTML = '';
+	delete cursors[cursorId];
+});
+
+function sendCursor(){
+	if(mousePos.x != lastMousePos.x || mousePos.y != lastMousePos.y || color != lastMouseColor)
+	{
+		lastMousePos = mousePos;
+		lastMouseColor = color;
+		socket.emit('updateCursor', { x : mousePos.x, y : mousePos.y, color : color});
+	}
+}
+
+function createCursor(c){
 	const SIZE = 32;
 	const HALF = SIZE/ 2;
 	
-	var cursor = document.createElement('canvas');
-	var img = cursor.getContext('2d');
+	var can = document.createElement('canvas');
+	var ctx = can.getContext('2d');
 	
-	cursor.width = SIZE;
-	cursor.height = SIZE;
+	can.width = SIZE;
+	can.height = SIZE;
 	
-	img.fillStyle = color;
+	ctx.fillStyle = COLORS[c];
 	
-	img.fillRect(HALF - LINE_WIDTH / 2, HALF - LINE_WIDTH / 2, LINE_WIDTH, LINE_WIDTH);
+	ctx.fillRect(HALF - LINE_WIDTH / 2, HALF - LINE_WIDTH / 2, LINE_WIDTH, LINE_WIDTH);
 	
-	canvas.style.cursor = 'url(' + cursor.toDataURL() + ') ' + HALF + ' '  + HALF + ', auto';
+	return can.toDataURL();
 }
