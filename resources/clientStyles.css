@@ -6,6 +6,7 @@ html, body{
 
 fieldset{
 	border: none;
+	background-color: #FFFFFF;
 }
 
 canvas{
@@ -97,6 +98,14 @@ td{
 	top: 40%;
 	left: 50%;
 	transform: translate(-50%, -50%);
+	pointer-events: none;
+	z-index:-1;
+}
+
+#clear{
+	position: fixed;
+	bottom: 0px;
+	left: 0px;
 	pointer-events: none;
 	z-index:-1;
 }

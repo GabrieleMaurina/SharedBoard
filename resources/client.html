@@ -5,37 +5,52 @@
 		<script type='text/javascript' src='Cookies.js'></script>
 		<script type='text/javascript' src='address.js'></script>
 		<link rel='stylesheet' href='clientStyles.css'>
+		<meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=no'>
 	</head>
 	<body>
+		<table id='palette'>
+			<tr>
+				<td id='c0' onclick='highlight(0)'></td>
+				<td id='c1' onclick='highlight(1)'></td>
+				<td id='c2' onclick='highlight(2)'></td>
+				<td id='c3' onclick='highlight(3)'></td>
+				<td id='c4' onclick='highlight(4)'></td>
+				<td id='c5' onclick='highlight(5)'></td>
+				<td id='c6' onclick='highlight(6)'></td>
+				<td id='c7' onclick='highlight(7)'></td>
+				<td id='c8' onclick='highlight(8)'></td>
+				<td id='c9' onclick='highlight(9)'></td>
+			</tr>
+		</table>
 		<fieldset id='title'>
-			<h3 id='title_title'>SharedBoard</h3>
+			<h3 id='title_title' onclick='helpClick()'>SharedBoard</h3>
 			<h4>Key bindings</h4>
 			<ul>
 			  <li>C - clear</li>
 			  <li>Enter - chat</li>
 			  <li>H - help</li>
-			  <li>Mouse Wheel - color</li>
+			  <li>Mouse Wheel / W - color</li>
 			  <li>N - name</li>
 			  <li>R - room</li>
 			</ul>
 		</fieldset>
 		<fieldset id='clients'>
-			<h3 id='clients_count'>Clients: 0</h3>
+			<h3 id='clients_count' onclick='namesClick()'>Clients: 0</h3>
 			<input id='name_input' maxlength='20'>
 			<p id='names'></p>
 		</fieldset>
 		<fieldset id='chat'>
-			<h3 id='chat_title'>Chat</h3>
+			<h3 id='chat_title' onclick='chatClick()'>Chat</h3>
 			<p id='chat_text'></p>
 			<input id='chat_input' maxlength='300'>
 		</fieldset>
 		<fieldset id='rooms'>
-			<h3 id='rooms_title'>HOME</h3>
+			<h3 id='rooms_title' onclick='roomsClick()'>HOME</h3>
 			<h4 id='rooms_instruction'>Type room to join</h4>
 			<input id='rooms_input' maxlength='10' size='10'>
 		</fieldset>
 		<fieldset id='help'>
-			<h3>SharedBoard - Help</h3>
+			<h3 onclick='helpClick()'>SharedBoard - Help</h3>
 			<p>
 				SharedBoard is a free website that allows people to share virtual boards.<br>
 				Feel free to join a custom room by pressing R.<br><br>
@@ -44,20 +59,9 @@
 				gabrielemaurina95@gmail.com
 			</p>
 		</fieldset>
-		<table id='palette'>
-			<tr>
-				<td id='c0'></td>
-				<td id='c1'></td>
-				<td id='c2'></td>
-				<td id='c3'></td>
-				<td id='c4'></td>
-				<td id='c5'></td>
-				<td id='c6'></td>
-				<td id='c7'></td>
-				<td id='c8'></td>
-				<td id='c9'></td>
-			</tr>
-			</table>
+		<fieldset id='clear'>
+			<h3 onclick='clearScreen()'>Clear</h3>
+		</fieldset>
 		<canvas id='canvas'></canvas>
 		<script src='client.js'></script>
 	</body>

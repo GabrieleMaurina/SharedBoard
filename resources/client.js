@@ -1,3 +1,5 @@
+const IDS = {CHAT : 'chat', TITLE : 'title', ROOMS : 'rooms', CLIENTS : 'clients', PALETTE : 'palette', CLEAR : 'clear', HELP : 'help'};
+
 const COLORS = ['#000000', '#7F7F7F', '#880015', '#ED1C24', '#FF8927', '#FFF200', '#22B14C', '#00A2E8', '#3F48CC', '#A349AE', '#FFFFFF'];
 const C_NAMES = { BLACK : 0, GRAY : 1, DARK_RED : 2, RED : 3, ORANGE : 4, YELLOW : 5, GREEN : 6, LIGHT_BLUE : 7, BLUE : 8, PURPLE : 9, WHITE : 10 };
 
@@ -12,7 +14,10 @@ const MSG_PER_SEC = 20;
 const WIDTH = 2000;
 const HEIGHT = 2000;
 
-const LINE_WIDTH = 4;
+const LINE_WIDTH = 8;
+
+const CURSOR_WIDTH = 32;
+const HALF_CURSOR_WIDTH = CURSOR_WIDTH / 2;
 
 var canvas = document.getElementById('canvas');
 
@@ -32,11 +37,29 @@ function resizeCanvas(){
 
 	canvas.style.width = window.innerWidth;
 	canvas.style.height = window.innerHeight;
+	
+	makeCursor(color);
 }
 
 resizeCanvas();
 
 window.addEventListener('resize', resizeCanvas);
+
+var eles = {};
+for(key in IDS){
+	eles[key] = document.getElementById(IDS[key]);
+}
+var desktop = true;
+if('ontouchstart' in window){
+	desktop = false;
+	for(i in eles){
+		eles[i].style.pointerEvents = 'all';
+		eles[i].style.zIndex = 1;
+	}
+}
+else{
+	eles.CLEAR.style.display = 'none';
+}
 
 var lines = [];
 var drawing = false;
@@ -50,7 +73,7 @@ var lastColor = C_NAMES.WHITE;
 
 canvas.addEventListener('mousedown', function (e) {
 	if(e.which == 1){
-		fucusCanvas();
+		focusCanvas();
 		drawing = true;
 		p = getMousePos(e);
 		lP = p;
@@ -251,12 +274,16 @@ document.onkeyup = function(e) {
 		else if (e.key == 'r' || e.key == 'R'){
 			showRoom();
 		}
+		else if (e.key == 'w' || e.key == 'W'){
+			highlight((color + 1) % 10);
+		}
 	}
 };
 
 function hideChat(){
 	typing = false;
 	chatInput.style.display = 'none';
+	eles.CHAT.style.zIndex = desktop ? -1 : 1;
 }
 
 function submitChat(){
@@ -271,6 +298,17 @@ function showChat(){
 	typing = true;
 	chatInput.style.display = 'initial';
 	chatInput.focus();
+	eles.CHAT.style.zIndex = 1;
+}
+
+function chatClick(){
+	if(typing){
+		hideChat();
+	}
+	else{
+		focusCanvas(IDS.CHAT);
+		showChat();
+	}
 }
 
 function displayChatText(){
@@ -292,6 +330,8 @@ socket.on('msg', function(msg){
 });
 
 function clearScreen(){
+	focusCanvas();
+	
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	ctx.beginPath();
 	
@@ -336,12 +376,14 @@ function showName(){
 	naming = true;
 	nameInput.style.display = 'initial';
 	nameInput.focus();
+	eles.CLIENTS.style.zIndex = 1;
 }
 
 function submitName(){
 	naming = false;
 	nameInput.style.display = 'none';
 	nameInput.blur();
+	eles.CLIENTS.style.zIndex = desktop ? -1 : 1;
 	
 	var newName = nameInput.value;
 	newName = stripTags(newName);
@@ -356,17 +398,27 @@ function submitName(){
 	}
 }
 
-function fucusCanvas(){
-	if(typing){
-		hideChat();
-	}
+function namesClick(){
 	if(naming){
 		submitName();
 	}
-	if(helping){
+	else{
+		focusCanvas(IDS.CLIENTS);
+		showName();
+	}
+}
+
+function focusCanvas(id){
+	if((!id || id != IDS.CHAT) && typing){
+		hideChat();
+	}
+	if((!id || id != IDS.CLIENTS) && naming){
+		submitName();
+	}
+	if((!id || id != IDS.HELP) && helping){
 		hideHelp();
 	}
-	if(rooming){
+	if((!id || id != IDS.ROOMS) && rooming){
 		hideRoom();
 	}
 }
@@ -408,12 +460,24 @@ function showRoom(){
 	roomsInstruction.style.display = 'initial';
 	roomsInput.style.display = 'initial';
 	roomsInput.focus();
+	eles.ROOMS.style.zIndex = 1;
 }
 
 function hideRoom(){
 	rooming = false;
 	roomsInstruction.style.display = 'none';
 	roomsInput.style.display = 'none';
+	eles.ROOMS.style.zIndex = desktop ? -1 : 1;
+}
+
+function roomsClick(){
+	if(rooming){
+		hideRoom();
+	}
+	else{
+		focusCanvas(IDS.ROOMS);
+		showRoom();
+	}
 }
 
 var help = document.getElementById('help');
@@ -423,10 +487,22 @@ hideHelp();
 function showHelp(){
 	helping = true;
 	help.style.display = 'initial';
+	eles.HELP.style.zIndex = 1;
 }
 function hideHelp(){
 	helping = false;
 	help.style.display = 'none';
+	eles.HELP.style.zIndex = desktop ? -1 : 1;
+}
+
+function helpClick(){
+	if(helping){
+		hideHelp();
+	}
+	else{
+		focusCanvas(IDS.HELP);
+		showHelp();
+	}
 }
 
 var squares = [];
@@ -458,13 +534,12 @@ canvas.addEventListener('mousewheel', function (e) {
 }, false);
 
 function makeCursor(color) {
-	const HALF = 16;
-	canvas.style.cursor = 'url(' + createCursor(color) + ') ' + HALF + ' '  + HALF + ', auto';
+	canvas.style.cursor = 'url(' + createCursor(color) + ') ' + HALF_CURSOR_WIDTH + ' '  + HALF_CURSOR_WIDTH + ', auto';
 }
 
 var cursors = {};
 socket.on('updateCursor', function(cursor){
-	const HALF = 16;
+	const HALF_CURSOR_WIDTH = 16;
 	
 	if(cursors[cursor.id]){
 		cursors[cursor.id].outerHTML = '';
@@ -475,8 +550,8 @@ socket.on('updateCursor', function(cursor){
 	
 	var rect = canvas.getBoundingClientRect();
 	
-	img.style.left = (cursor.x * X_RATIO + rect.left - HALF) + 'px';
-	img.style.top = (cursor.y * Y_RATIO + rect.top - HALF) + 'px';
+	img.style.left = (cursor.x * X_RATIO + rect.left - HALF_CURSOR_WIDTH) + 'px';
+	img.style.top = (cursor.y * Y_RATIO + rect.top - HALF_CURSOR_WIDTH) + 'px';
 	
 	img.style.pointerEvents = 'none';
 	img.style.zIndex = -1;
@@ -499,19 +574,16 @@ function sendCursor(){
 	}
 }
 
-function createCursor(c){
-	const SIZE = 32;
-	const HALF = SIZE/ 2;
-	
+function createCursor(c){	
 	var can = document.createElement('canvas');
 	var ctx = can.getContext('2d');
 	
-	can.width = SIZE;
-	can.height = SIZE;
+	can.width = CURSOR_WIDTH;
+	can.height = CURSOR_WIDTH;
 	
 	ctx.fillStyle = COLORS[c];
 	
-	ctx.fillRect(HALF - LINE_WIDTH / 2, HALF - LINE_WIDTH / 2, LINE_WIDTH, LINE_WIDTH);
+	ctx.fillRect(HALF_CURSOR_WIDTH - LINE_WIDTH * X_RATIO / 2, HALF_CURSOR_WIDTH - LINE_WIDTH * Y_RATIO / 2, LINE_WIDTH * X_RATIO, LINE_WIDTH * Y_RATIO);
 	
 	return can.toDataURL();
 }
