@@ -65,8 +65,8 @@ td{
 
 #clients{
 	position: fixed;
-	top: 10px;
-	right: 10px;
+	top: 0px;
+	right: 0px;
 	pointer-events: none;
 	z-index:-1;
 }

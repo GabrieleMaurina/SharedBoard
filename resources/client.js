@@ -25,6 +25,24 @@ var X_RATIO = 1;
 var Y_RATIO = 1;
 var ctx = null;
 
+var eles = {};
+for(key in IDS){
+	eles[key] = document.getElementById(IDS[key]);
+}
+var desktop = true;
+if('ontouchstart' in window){
+	desktop = false;
+	for(i in eles){
+		eles[i].style.pointerEvents = 'all';
+		eles[i].style.zIndex = 1;
+	}
+	document.getElementById('key_bindings').style.display = 'none';
+	document.getElementById('keys_list').style.display = 'none';
+}
+else{
+	eles.CLEAR.style.display = 'none';
+}
+
 canvas.width = WIDTH;
 canvas.height = HEIGHT;
 
@@ -39,27 +57,19 @@ function resizeCanvas(){
 	canvas.style.height = window.innerHeight;
 	
 	makeCursor(color);
+	if(window.innerWidth < 600){
+		eles.CHAT.style.bottom = '50px';
+		eles.CLEAR.style.bottom = '50px';
+	}
+	else{
+		eles.CHAT.style.bottom = '0px';
+		eles.CLEAR.style.bottom = '0px';
+	}
 }
 
 resizeCanvas();
 
 window.addEventListener('resize', resizeCanvas);
-
-var eles = {};
-for(key in IDS){
-	eles[key] = document.getElementById(IDS[key]);
-}
-var desktop = true;
-if('ontouchstart' in window){
-	desktop = false;
-	for(i in eles){
-		eles[i].style.pointerEvents = 'all';
-		eles[i].style.zIndex = 1;
-	}
-}
-else{
-	eles.CLEAR.style.display = 'none';
-}
 
 var lines = [];
 var drawing = false;
@@ -298,7 +308,7 @@ function showChat(){
 	typing = true;
 	chatInput.style.display = 'initial';
 	chatInput.focus();
-	eles.CHAT.style.zIndex = 1;
+	eles.CHAT.style.zIndex = 2;
 }
 
 function chatClick(){
@@ -376,7 +386,7 @@ function showName(){
 	naming = true;
 	nameInput.style.display = 'initial';
 	nameInput.focus();
-	eles.CLIENTS.style.zIndex = 1;
+	eles.CLIENTS.style.zIndex = 2;
 }
 
 function submitName(){
@@ -460,7 +470,7 @@ function showRoom(){
 	roomsInstruction.style.display = 'initial';
 	roomsInput.style.display = 'initial';
 	roomsInput.focus();
-	eles.ROOMS.style.zIndex = 1;
+	eles.ROOMS.style.zIndex = 2;
 }
 
 function hideRoom(){
@@ -487,7 +497,7 @@ hideHelp();
 function showHelp(){
 	helping = true;
 	help.style.display = 'initial';
-	eles.HELP.style.zIndex = 1;
+	eles.HELP.style.zIndex = 2;
 }
 function hideHelp(){
 	helping = false;

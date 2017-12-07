@@ -1,8 +1,10 @@
 table {
-	margin: 50px;
+	margin-top: 0px;
+	margin-bottom: 20px;
+	margin-left: auto;
+	margin-right: auto;
 	text-align: center;
     border-collapse: collapse;
-	float: left;
 }
 
 table, th, td {

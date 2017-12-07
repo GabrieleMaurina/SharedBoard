@@ -3,6 +3,19 @@ var roomsTitle = document.getElementById('rooms_title');
 var clientsList = document.getElementById('clients_list');
 var roomsList = document.getElementById('rooms_list');
 
+var div = document.getElementById('tables_div');
+
+function resize(){
+	if(window.innerWidth < 600){
+		div.style.display = 'inline';
+	}
+	else{
+		div.style.display = 'flex';
+	}
+}
+resize();
+window.addEventListener('resize', resize);
+
 var socket = io.connect(ADDRESS);
 
 socket.emit('admin');
