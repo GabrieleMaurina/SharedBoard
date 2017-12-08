@@ -492,7 +492,7 @@ function roomsClick(){
 
 var help = document.getElementById('help');
 var helping = false;
-hideHelp();
+showHelp();
 
 function showHelp(){
 	helping = true;
