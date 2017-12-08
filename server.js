@@ -45,6 +45,7 @@ io.on('connect', function(socket){
 	
 	socket.on('updateCursor', function(cursor){
 		cursor.id = socket.id;
+		cursor.name = socket.name;
 		socket.broadcast.to(Object.keys(socket.rooms)[0]).emit('updateCursor', cursor);
 	});
 	
@@ -54,7 +55,7 @@ io.on('connect', function(socket){
 			if(msg.length > MAX_MSG_LENGTH){
 				msg = msg.substr(0, MAX_MSG_LENGTH);
 			}
-			var name = socket.nickname || 'Unknown';
+			var name = socket.name || 'Unknown';
 			io.sockets.in(Object.keys(socket.rooms)[0]).emit('msg', name + ': ' + msg);
 		}
 	});
@@ -65,12 +66,13 @@ io.on('connect', function(socket){
 			msg = msg.substr(0, MAX_NAME_LENGTH);
 		}
 		
-		if(socket.nickname != name){
-			socket.nickname = name;
+		if(socket.name != name){
+			socket.name = name;
 			if(name == ''){
-				delete socket.nickname;
+				delete socket.name;
 			}
 			sendNames(Object.keys(socket.rooms)[0]);
+			socket.broadcast.to(Object.keys(socket.rooms)[0]).emit('updateCursor', {name : name, id : socket.id});
 			sendUpdate();
 		}
 	});
@@ -98,9 +100,9 @@ function sendNames(room){
 	io.in(room).clients(function(err, clients){
 		var names = [];
 		for(i in clients){
-			var nickname = io.sockets.connected[clients[i]].nickname;
-			if(nickname){
-				names.push(nickname);
+			var name = io.sockets.connected[clients[i]].name;
+			if(name){
+				names.push(name);
 			}
 		}
 		
@@ -127,7 +129,7 @@ function sendUpdate(){
 	
 	for(i in io.sockets.connected){
 		var c = {};
-		c.name = io.sockets.connected[i].nickname || '';
+		c.name = io.sockets.connected[i].name || '';
 		c.ip = (io.sockets.connected[i].handshake.headers['x-forwarded-for'] || io.sockets.connected[i].handshake.address).replace('::ffff:', '');
 		c.room = Object.keys(io.sockets.connected[i].rooms)[0];
 		clients.push(c);

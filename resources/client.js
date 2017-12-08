@@ -401,7 +401,7 @@ function submitName(){
 		newName = newName.substr(0, MAX_NAME_LENGTH);
 	}
 	
-	if(newName && newName != name){
+	if(newName != name){
 		name = newName;
 		socket.emit('name', name);
 		Cookies.set(NAME_COOKIE, name, {expiry : 60 * 60 * 24 * 365});
@@ -548,31 +548,55 @@ function makeCursor(color) {
 }
 
 var cursors = {};
+var cursorsNames = {};
 socket.on('updateCursor', function(cursor){
-	const HALF_CURSOR_WIDTH = 16;
-	
-	if(cursors[cursor.id]){
-		cursors[cursor.id].outerHTML = '';
-	}
-	var img = document.createElement('img');
-	img.src = createCursor(cursor.color);
-	img.style.position = 'absolute';
-	
 	var rect = canvas.getBoundingClientRect();
 	
-	img.style.left = (cursor.x * X_RATIO + rect.left - HALF_CURSOR_WIDTH) + 'px';
-	img.style.top = (cursor.y * Y_RATIO + rect.top - HALF_CURSOR_WIDTH) + 'px';
+	if(!cursors[cursor.id]){
+		var img = document.createElement('img');
+		img.style.position = 'absolute';
+		img.style.pointerEvents = 'none';
+		img.style.zIndex = -1;
+		
+		document.body.appendChild(img);	
+		cursors[cursor.id] = img;
+	}
+	if(!cursorsNames[cursor.id]){
+		var name = document.createElement('label');
+		name.style.position = 'absolute';
+		name.style.transform = 'translate(-50%, 0)';
+		
+		name.style.pointerEvents = 'none';
+		name.style.zIndex = -1;
+		
+		document.body.appendChild(name);
+		cursorsNames[cursor.id] = name;
+	}
 	
-	img.style.pointerEvents = 'none';
-	img.style.zIndex = -1;
-	
-	cursors[cursor.id] = img;
-	document.body.appendChild(img);	
+	if(cursor.x){
+		cursors[cursor.id].style.left = (cursor.x * X_RATIO + rect.left - HALF_CURSOR_WIDTH) + 'px';
+		cursorsNames[cursor.id].style.left = (cursor.x * X_RATIO + rect.left) + 'px';
+	}
+	if(cursor.y){
+		cursorsNames[cursor.id].style.top = (cursor.y * Y_RATIO + rect.top - CURSOR_WIDTH) + 'px';
+		cursors[cursor.id].style.top = (cursor.y * Y_RATIO + rect.top - HALF_CURSOR_WIDTH) + 'px';
+	}
+	if(cursor.color != undefined){
+		cursors[cursor.id].src = createCursor(cursor.color);
+		cursorsNames[cursor.id].style.color = COLORS[cursor.color];
+	}
+	cursorsNames[cursor.id].innerHTML = cursor.name || 'Unknown';
 });
 
 socket.on('removeCursor', function(cursorId){
-	cursors[cursorId].outerHTML = '';
-	delete cursors[cursorId];
+	if(cursors[cursorId]){
+		cursors[cursorId].outerHTML = '';
+		delete cursors[cursorId];
+	}
+	if(cursorsNames[cursorId]){
+		cursorsNames[cursorId].outerHTML = '';
+		delete cursorsNames[cursorId];
+	}
 });
 
 function sendCursor(){
