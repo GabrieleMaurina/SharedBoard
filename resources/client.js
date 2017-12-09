@@ -1,3 +1,9 @@
+const CLAIMED = 0;
+const UNCLAIMED = 1;
+const MINE = 2;
+
+const CLAIM_STATES = ['(claimed)', '', '(mine)'];
+
 const LEFT = 1;
 const RIGHT = 3;
 
@@ -91,66 +97,72 @@ var beforeWhite = C_NAMES.WHITE;
 var mouseButton = 0;
 
 canvas.addEventListener('mousedown', function (e) {
-	mouseButton = e.which;
-	
-	if(e.which == RIGHT){
-		highlight(C_NAMES.WHITE);
-	}
-	else if(e.which == LEFT){
-		highlight(beforeWhite);
-	}
-	
 	focusCanvas();
-	drawing = true;
-	p = getMousePos(e);
-	lP = p;
-	
-	if(lastColor != color){
-		p.color = color;
-		lastColor = color;
+	if(claimed){
+		mouseButton = e.which;
+		
+		if(e.which == RIGHT){
+			highlight(C_NAMES.WHITE);
+		}
+		else if(e.which == LEFT){
+			highlight(beforeWhite);
+		}
+		
+		drawing = true;
+		p = getMousePos(e);
+		lP = p;
+		
+		if(lastColor != color){
+			p.color = color;
+			lastColor = color;
+		}
+		
+		point(p, color);
+		
+		lines.push([p]);
 	}
-	
-	point(p, color);
-	
-	lines.push([p]);
 }, false);
 
 canvas.addEventListener('mouseup', function (e) {
-	if(mouseButton == e.which){
-		mouseButton = 0;
-		
-		drawing = false;
-		point(p, color);
-		
-		if(e.which == RIGHT){
-			highlight(beforeWhite);
+	if(claimed){
+		if(mouseButton == e.which){
+			mouseButton = 0;
+			
+			drawing = false;
+			point(p, color);
+			
+			if(e.which == RIGHT){
+				highlight(beforeWhite);
+			}
 		}
 	}
 }, false);
 
 canvas.addEventListener('mousemove', function (e) {
 	mousePos = getMousePos(e);
-	if(drawing)
-	{
-		pTmp = mousePos;
-		if (p.x != pTmp.x || p.y != pTmp.y)
+	if(claimed){
+		if(drawing)
 		{
-			lP = p;
-			p = pTmp;
-			
-			if(lastColor != color){
-				p.color = color;
-				lastColor = color;
-			}
-			
-			line(lP, p, color);
-			point(p, color);
-			
-			if(lines.length > 0) {
-				lines[lines.length - 1].push(p);
-			}
-			else {
-				lines.push([lP, p]);
+			pTmp = mousePos;
+			if (p.x != pTmp.x || p.y != pTmp.y)
+			{
+				lP = p;
+				p = pTmp;
+				
+				if(lastColor != color){
+					p.color = color;
+					lastColor = color;
+				}
+				
+				line(lP, p, color);
+				point(p, color);
+				
+				if(lines.length > 0) {
+					lines[lines.length - 1].push(p);
+				}
+				else {
+					lines.push([lP, p]);
+				}
 			}
 		}
 	}
@@ -220,13 +232,15 @@ socket.on('lines', function(lines){
 });
 
 function sendLines(){
-	var toSend = lines;
-	lines = [];
-	if(toSend.length > 0){
-		if(!toSend[0][0].color){
-			toSend[0][0].color = color;
+	if(claimed){
+		var toSend = lines;
+		lines = [];
+		if(toSend.length > 0){
+			if(!toSend[0][0].color){
+				toSend[0][0].color = color;
+			}
+			socket.emit('lines', toSend);
 		}
-		socket.emit('lines', toSend);
 	}
 }
 
@@ -288,8 +302,11 @@ document.onkeyup = function(e) {
 		}
 	}
 	else{
-		if (e.key == 'c' || e.key == 'C'){
+		if (e.key == 'Backspace' || e.key == 'Delete'){
 			clearScreen();
+		}
+		else if (e.key == 'c' || e.key == 'C'){
+			claim();
 		}
 		else if (e.key == 'Enter'){
 			showChat();
@@ -459,6 +476,9 @@ document.title = 'SharedBoard - ' + (room || 'HOME');
 var roomsTitle = document.getElementById('rooms_title');
 var roomsInstruction = document.getElementById('rooms_instruction');
 var roomsInput = document.getElementById('rooms_input');
+var claimButton = document.getElementById('claim');
+claimButton.style.display = 'none';
+
 roomsTitle.innerHTML = room || 'HOME';
 var rooming = false;
 hideRoom();
@@ -478,10 +498,14 @@ function submitRoom(){
 		room = newRoom;
 		socket.emit('join', room);
 		window.history.pushState('', '', '/' + room);
-		roomsTitle.innerHTML = room || 'HOME';
+		setRoomName();
 		document.title = 'SharedBoard - ' + (room || 'HOME');
 		clearScreen();
 	}
+}
+
+function setRoomName(){
+	roomsTitle.innerHTML = (room || 'HOME') + ' ' + CLAIM_STATES[claimed];
 }
 
 function showRoom(){
@@ -490,6 +514,10 @@ function showRoom(){
 	roomsInput.style.display = 'initial';
 	roomsInput.focus();
 	eles.ROOMS.style.zIndex = 2;
+	
+	if(!desktop){
+		claimButton.style.display = 'initial';
+	}
 }
 
 function hideRoom(){
@@ -497,6 +525,10 @@ function hideRoom(){
 	roomsInstruction.style.display = 'none';
 	roomsInput.style.display = 'none';
 	eles.ROOMS.style.zIndex = desktop ? -1 : 1;
+	
+	if(!desktop){
+		claimButton.style.display = 'none';
+	}
 }
 
 function roomsClick(){
@@ -647,3 +679,16 @@ function createCursor(c){
 	
 	return can.toDataURL();
 }
+
+var claimed = UNCLAIMED;
+
+function claim(){
+	if(room){
+		socket.emit('claim');
+	}
+}
+
+socket.on('claim', function(c){
+	claimed = c;
+	setRoomName();
+});

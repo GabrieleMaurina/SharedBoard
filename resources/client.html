@@ -26,7 +26,8 @@
 			<h3 id='title_title' onclick='helpClick()'>SharedBoard</h3>
 			<h4 id='key_bindings'>Key bindings</h4>
 			<ul id='keys_list'>
-			  <li>C - clear</li>
+			  <li>Backspace / Delete - clear</li>
+			  <li>C - claim</li>
 			  <li>Enter - chat</li>
 			  <li>H - help</li>
 			  <li>Mouse Wheel / W - color</li>
@@ -49,6 +50,8 @@
 			<h3 id='rooms_title' onclick='roomsClick()'>HOME</h3>
 			<h4 id='rooms_instruction'>Type room to join</h4>
 			<input id='rooms_input' maxlength='10' size='10'>
+			<br><br>
+			<h4 id='claim' onclick='claim()'>Or touch here to claim current room!</h4>
 		</fieldset>
 		<fieldset id='help' onclick='helpClick()'>
 			<h3>SharedBoard - Help</h3>

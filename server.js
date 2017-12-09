@@ -1,3 +1,7 @@
+const CLAIMED = 0;
+const UNCLAIMED = 1;
+const MINE = 2;
+
 const MAX_MSG_LENGTH = 300;
 const MAX_NAME_LENGTH = 20;
 const MAX_ROOM_LENGTH = 10;
@@ -23,6 +27,7 @@ app.get('/:page', function(req, res) {
 });
 
 var names = {};
+var claims = {};
 
 io.on('connect', function(socket){
 	socket.on('admin', function(){
@@ -36,11 +41,40 @@ io.on('connect', function(socket){
 		}
 		if(room != 'admin'){
 			join(socket, room);
+			if(claims[room]){
+				socket.emit('claim', CLAIMED);
+			}
+			else{
+				socket.emit('claim', UNCLAIMED);
+			}
+		}
+	});
+	
+	socket.on('claim', function(lines){
+		var r = Object.keys(socket.rooms)[0];
+		if(r){
+			if(claims[r]){
+				if(claims[r] == socket.id){
+					delete claims[r];
+					io.sockets.in(r).emit('claim', UNCLAIMED);
+				}
+			}
+			else{
+				io.in(r).clients(function(err, clients){
+					if(clients.length == 1 && clients[0] == socket.id){
+						claims[r] = socket.id;
+						socket.emit('claim', MINE);
+					}
+				});
+			}
 		}
 	});
 	
 	socket.on('lines', function(lines){
-		socket.broadcast.to(Object.keys(socket.rooms)[0]).emit('lines', lines);
+		var r = Object.keys(socket.rooms)[0];
+		if(!claims[r] || claims[r] == socket.id){
+			socket.broadcast.to(r).emit('lines', lines);
+		}
 	});
 	
 	socket.on('updateCursor', function(cursor){
@@ -86,6 +120,10 @@ io.on('connect', function(socket){
 		sendNames(lastRoom);
 		sendClientsCount(lastRoom);
 		io.sockets.in(lastRoom).emit('removeCursor', socket.id);
+		if(claims[lastRoom] == socket.id){
+			delete claims[lastRoom];
+			io.sockets.in(lastRoom).emit('claim', UNCLAIMED);
+		}
 		sendUpdate();
 	});
 });
