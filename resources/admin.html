@@ -30,8 +30,8 @@
 			<table>
 				<thead>
 					<tr>
-						<th id='rooms_title' colspan="3">
-							Rooms 0
+						<th id='rooms_title' colspan="2">
+							Online Rooms 0
 						</th>
 					</tr>
 					<tr id='clickable'>
@@ -40,6 +40,22 @@
 					</tr>
 				<thead>
 				<tbody id='rooms_list'>
+				</tbody>
+			</table>
+			<table>
+				<thead>
+					<tr>
+						<th id='mongo_title' colspan="3">
+							Mongo Rooms 0
+						</th>
+					</tr>
+					<tr id='clickable'>
+						<th onclick="sortTable(mongoList, 0);">Name</th>
+						<th onclick="sortTable(roomsList, 1);">Documents</th>
+						<th></th>
+					</tr>
+				<thead>
+				<tbody id='mongo_list'>
 				</tbody>
 			</table>
 		</div>

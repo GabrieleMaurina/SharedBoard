@@ -375,7 +375,18 @@ socket.on('msg', function(msg){
 	}
 });
 
+socket.on('clear', function(){
+	clear();
+});
+
 function clearScreen(){
+	if(claimed){
+		socket.emit('clear');
+		clear();
+	}
+}
+
+function clear(){
 	focusCanvas();
 	
 	ctx.clearRect(0, 0, canvas.width, canvas.height);

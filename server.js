@@ -87,13 +87,28 @@ io.on('connect', function(socket){
 		}
 	});
 	
+	socket.on('clear', function(room){
+		var r = Object.keys(socket.rooms)[0];
+		var admin = false;
+		
+		if(room != undefined){
+			r = room;
+			admin = true;
+		}
+		
+		if(admin || !claims[r] || claims[r] == socket.id){
+			socket.broadcast.to(r).emit('clear');
+			Update.remove({room : r}).exec(sendUpdate);
+		}
+	});
+	
 	socket.on('lines', function(lines){
 		var r = Object.keys(socket.rooms)[0];
 		if(!claims[r] || claims[r] == socket.id){
 			socket.broadcast.to(r).emit('lines', lines);
 			
 			var u = new Update({room : r, type : 'lines', data : lines});
-			u.save();
+			u.save(sendUpdate);
 		}
 	});
 	
@@ -183,7 +198,9 @@ function join(socket, room){
 }
 
 function sendUpdate(){
+	var update = {};
 	var clients = [];
+	var mongo = [];
 	
 	for(i in io.sockets.connected){
 		var c = {};
@@ -192,8 +209,17 @@ function sendUpdate(){
 		c.room = Object.keys(io.sockets.connected[i].rooms)[0];
 		clients.push(c);
 	}
+	
+	Update.aggregate([{$group: {_id: '$room', documents: {$sum: 1}}}]).exec(function(err, res){
+		for(i in res){
+			mongo.push({room : res[i]._id, documents : res[i].documents});
+		}
 		
-	io.in('admin').emit('update', clients);
+		update.clients = clients;
+		update.mongo = mongo;
+		
+		io.in('admin').emit('update', update);
+	});
 }
 
 server.listen(process.env.PORT || 80);

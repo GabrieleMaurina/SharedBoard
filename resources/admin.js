@@ -1,7 +1,9 @@
 var clientsTitle = document.getElementById('clients_title');
 var roomsTitle = document.getElementById('rooms_title');
+var mongoTitle = document.getElementById('mongo_title');
 var clientsList = document.getElementById('clients_list');
 var roomsList = document.getElementById('rooms_list');
+var mongoList = document.getElementById('mongo_list');
 
 var div = document.getElementById('tables_div');
 
@@ -20,11 +22,14 @@ var socket = io.connect(ADDRESS);
 
 socket.emit('admin');
 
-socket.on('update', function(clients){
+socket.on('update', function(update){
+	var clients = update.clients;
+	var mongo = update.mongo;
 	var rooms = [];
 	
 	var clientsHTML = '';
 	var roomsHTML = '';
+	var mongoHTML = '';
 	
 	for(i in clients){
 		clientsHTML += '<tr><td>' + clients[i].name + '</td><td>' + clients[i].ip + '</td><td><a href="' + (clients[i].room || ADDRESS) + '">' + (clients[i].room || 'HOME') + '</a></td></tr>';
@@ -40,13 +45,21 @@ socket.on('update', function(clients){
 		roomsHTML += '<tr><td><a href="' + (i || ADDRESS) + '">' + (i || 'HOME') + '</a></td><td>' + rooms[i].clientsCount + '</td></tr>';
 	}
 	
+	for(i in mongo){
+		mongoHTML += '<tr><td>' + (mongo[i].room || 'HOME') + '</td><td>' + mongo[i].documents + '</td><td onclick=\'drop("' + mongo[i].room + '")\' id="clickable"><font color="#ED1C24">DROP</font></td></tr>';
+	}
+	
 	clientsTitle.innerHTML = 'Clients ' + clients.length;
-	roomsTitle.innerHTML = 'Rooms ' + Object.keys(rooms).length;
+	roomsTitle.innerHTML = 'Online Rooms ' + Object.keys(rooms).length;
+	mongoTitle = 'Mongo Rooms ' + mongo.length;
+	
 	clientsList.innerHTML = clientsHTML;
 	roomsList.innerHTML = roomsHTML;
+	mongoList.innerHTML = mongoHTML;
 	
 	sortTable(clientsList, 2);
 	sortTable(roomsList, 0);
+	sortTable(mongoList, 1);
 });
 
 function sortTable(table, column){
@@ -76,4 +89,9 @@ function switchRows(rows, i, j){
 	var parentNode = rows[i].parentNode;
 	parentNode.insertBefore(rows[j], rows[i]);
 	parentNode.insertBefore(rows[i + 1], rows[j]);
+}
+
+function drop(room){
+	console.log('asdf');
+	socket.emit('clear', room);
 }
