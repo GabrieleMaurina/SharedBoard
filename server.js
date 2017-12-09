@@ -11,6 +11,14 @@ var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 var striptags = require('striptags');
+var Mongoose = require('mongoose');
+var Update = require('./mongoose/update.js');
+
+Mongoose.Promise = global.Promise;
+Mongoose.connect('mongodb://admin:admin@ds135186.mlab.com:35186/sharedboard', { useMongoClient: true }).then(
+    function() { console.log('DB connected successfully!'); },
+    function(err){ console.error('Error while connecting to DB: ' + err.message); }
+);
 
 app.use(express.static('resources'));
 
@@ -47,6 +55,15 @@ io.on('connect', function(socket){
 			else{
 				socket.emit('claim', UNCLAIMED);
 			}
+			Update.find({room : room}).sort('date').select('data').exec(function(err, res){
+				var lines = [];
+				for(i in res){
+					lines = lines.concat(res[i].data);
+				}
+				if(lines.length > 0){
+					socket.emit('lines', lines);
+				}
+			});
 		}
 	});
 	
@@ -74,6 +91,9 @@ io.on('connect', function(socket){
 		var r = Object.keys(socket.rooms)[0];
 		if(!claims[r] || claims[r] == socket.id){
 			socket.broadcast.to(r).emit('lines', lines);
+			
+			var u = new Update({room : r, type : 'lines', data : lines});
+			u.save();
 		}
 	});
 	
