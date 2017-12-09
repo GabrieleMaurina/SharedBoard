@@ -55,7 +55,7 @@ io.on('connect', function(socket){
 			else{
 				socket.emit('claim', UNCLAIMED);
 			}
-			Update.find({room : room}).sort('date').select('data').exec(function(err, res){
+			Update.find({room : room}).sort('date').select('data date').exec(function(err, res){
 				var lines = [];
 				for(i in res){
 					lines = lines.concat(res[i].data);

@@ -215,7 +215,7 @@ document.body.addEventListener('touchmove', function (e) {
 
 var socket = io.connect(ADDRESS);
 socket.on('lines', function(lines){
-	var c = COLORS[C_NAMES.BLACK];
+	var c = C_NAMES.BLACK;
 	for (i in lines) {
 		for(var j = 0; j < lines[i].length - 1; j++) {
 			if(lines[i][j].color != undefined){
@@ -226,6 +226,9 @@ socket.on('lines', function(lines){
 		}
 		
 		if(lines[i].length > 0) {
+			if(lines[i][j].color != undefined){
+				c = lines[i][j].color;
+			}
 			point(lines[i][lines[i].length - 1], c);
 		}
 	}
@@ -236,7 +239,7 @@ function sendLines(){
 		var toSend = lines;
 		lines = [];
 		if(toSend.length > 0){
-			if(!toSend[0][0].color){
+			if(toSend[0][0].color == undefined){
 				toSend[0][0].color = color;
 			}
 			socket.emit('lines', toSend);
