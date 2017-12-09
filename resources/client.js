@@ -501,6 +501,9 @@ function submitRoom(){
 		setRoomName();
 		document.title = 'SharedBoard - ' + (room || 'HOME');
 		clearScreen();
+		if(!desktop){
+			claimButton.style.display = 'none';
+		}
 	}
 }
 
