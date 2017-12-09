@@ -8,7 +8,7 @@ var mongoList = document.getElementById('mongo_list');
 var div = document.getElementById('tables_div');
 
 function resize(){
-	if(window.innerWidth < 600){
+	if(window.innerWidth < 700){
 		div.style.display = 'inline';
 	}
 	else{
@@ -59,11 +59,13 @@ socket.on('update', function(update){
 	
 	sortTable(clientsList, 2);
 	sortTable(roomsList, 0);
-	sortTable(mongoList, 1);
+	sortTable(mongoList, 1, false);
 });
 
-function sortTable(table, column){
-	var dir = true;
+function sortTable(table, column, dir){
+	if(dir == undefined){
+		dir = true;
+	}
 	var switched = false;
 	var rows = table.getElementsByTagName("TR");
 	
@@ -72,16 +74,20 @@ function sortTable(table, column){
 			for(var j = i + 1; j < rows.length; j++){
 				var first = rows[i].getElementsByTagName("TD")[column].innerHTML.toLowerCase();
 				var second = rows[j].getElementsByTagName("TD")[column].innerHTML.toLowerCase();
+				
+				first = Number(first) || first;
+				second = Number(second) || second;
+				
 				if ((dir && first > second)	|| (!dir && first < second)){
 					switchRows(rows, i, j);
 					switched = true;
 				}
 			}
 		}
-		if(dir && switched){
+		if(k == 0 && switched){
 			k++;
 		}
-		dir = false;
+		dir = !dir;
 	}
 }
 
