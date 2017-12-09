@@ -1,1 +1,1 @@
-const ADDRESS = 'https://sharedboardgm.herokuapp.com';//'http://localhost';//
+const ADDRESS = 'http://localhost';//'https://sharedboardgm.herokuapp.com';//

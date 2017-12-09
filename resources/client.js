@@ -1,3 +1,6 @@
+const LEFT = 1;
+const RIGHT = 3;
+
 const IDS = {CHAT : 'chat', TITLE : 'title', ROOMS : 'rooms', CLIENTS : 'clients', PALETTE : 'palette', CLEAR : 'clear', HELP : 'help'};
 
 const COLORS = ['#000000', '#7F7F7F', '#880015', '#ED1C24', '#FF8927', '#FFF200', '#22B14C', '#00A2E8', '#3F48CC', '#A349AE', '#FFFFFF'];
@@ -14,12 +17,15 @@ const MSG_PER_SEC = 20;
 const WIDTH = 2000;
 const HEIGHT = 2000;
 
-const LINE_WIDTH = 8;
+const LINE_WIDTH = 10;
 
 const CURSOR_WIDTH = 32;
 const HALF_CURSOR_WIDTH = CURSOR_WIDTH / 2;
 
 var canvas = document.getElementById('canvas');
+canvas.oncontextmenu = function (e) {
+    e.preventDefault();
+};
 
 var X_RATIO = 1;
 var Y_RATIO = 1;
@@ -80,29 +86,45 @@ var lastMousePos = mousePos;
 var lastMouseColor = C_NAMES.WHITE;
 
 var lastColor = C_NAMES.WHITE;
+var beforeWhite = C_NAMES.WHITE;
+
+var mouseButton = 0;
 
 canvas.addEventListener('mousedown', function (e) {
-	if(e.which == 1){
-		focusCanvas();
-		drawing = true;
-		p = getMousePos(e);
-		lP = p;
-		
-		if(lastColor != color){
-			p.color = color;
-			lastColor = color;
-		}
-		
-		point(p, color);
-		
-		lines.push([p]);
+	mouseButton = e.which;
+	
+	if(e.which == RIGHT){
+		highlight(C_NAMES.WHITE);
 	}
+	else if(e.which == LEFT){
+		highlight(beforeWhite);
+	}
+	
+	focusCanvas();
+	drawing = true;
+	p = getMousePos(e);
+	lP = p;
+	
+	if(lastColor != color){
+		p.color = color;
+		lastColor = color;
+	}
+	
+	point(p, color);
+	
+	lines.push([p]);
 }, false);
 
 canvas.addEventListener('mouseup', function (e) {
-	if(e.which == 1){
+	if(mouseButton == e.which){
+		mouseButton = 0;
+		
 		drawing = false;
 		point(p, color);
+		
+		if(e.which == RIGHT){
+			highlight(beforeWhite);
+		}
 	}
 }, false);
 
@@ -122,6 +144,7 @@ canvas.addEventListener('mousemove', function (e) {
 			}
 			
 			line(lP, p, color);
+			point(p, color);
 			
 			if(lines.length > 0) {
 				lines[lines.length - 1].push(p);
@@ -182,17 +205,11 @@ var socket = io.connect(ADDRESS);
 socket.on('lines', function(lines){
 	var c = COLORS[C_NAMES.BLACK];
 	for (i in lines) {
-		if(lines[i].length > 0) {
-			if(lines[i][0].color != undefined){
-				c = lines[i][0].color;
-			}
-			point(lines[i][0], c);
-		}
-		
 		for(var j = 0; j < lines[i].length - 1; j++) {
 			if(lines[i][j].color != undefined){
 				c = lines[i][j].color;
 			}
+			point(lines[i][j], c);
 			line(lines[i][j], lines[i][j + 1], c);
 		}
 		
@@ -221,8 +238,10 @@ function sendLines(){
 
 function point(p, c)
 {
+	var width = Math.round(LINE_WIDTH * 0.8);
+	
 	ctx.fillStyle = COLORS[c];
-	ctx.fillRect(p.x - LINE_WIDTH / 2, p.y - LINE_WIDTH / 2, LINE_WIDTH, LINE_WIDTH);
+	ctx.fillRect(p.x - width / 2, p.y - width / 2, width, width);
 }
 
 function line(p0, p1, c)
@@ -527,9 +546,16 @@ highlight(0);
 
 function highlight(i){
 	if(i != color){
-		squares[color].style.border = '4px solid ' + COLORS[C_NAMES.WHITE];
+		if(squares[color]){
+			squares[color].style.border = '4px solid ' + COLORS[C_NAMES.WHITE];
+		}
 		color = i;
-		squares[color].style.border = '4px solid ' + COLORS[color];
+		if(color != C_NAMES.WHITE){
+			beforeWhite = color;
+		}
+		if(squares[color]){
+			squares[color].style.border = '4px solid ' + COLORS[color];
+		}
 		makeCursor(color);
 	}
 }
