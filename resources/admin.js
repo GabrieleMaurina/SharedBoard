@@ -26,7 +26,7 @@ socket.on('reconnect', function(){
 	out('Connected', 1000);
 });
 socket.on('disconnect', function(c){
-	out('Disconnected', 1000);
+	out('Disconnected');
 });
 
 socket.on('update', function(update){
@@ -123,3 +123,11 @@ function out(m, t){
 		}, t);
 	}
 }
+
+var titleDiv = document.getElementById('title_div');
+var homeLink = document.createElement("a");
+homeLink.href = ADDRESS;
+homeLink.innerHTML = 'HOME';
+titleDiv.appendChild(homeLink);
+titleDiv.appendChild(document.createElement("br"));
+titleDiv.appendChild(document.createElement("br"));
