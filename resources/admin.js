@@ -51,7 +51,7 @@ socket.on('update', function(update){
 	
 	clientsTitle.innerHTML = 'Clients ' + clients.length;
 	roomsTitle.innerHTML = 'Online Rooms ' + Object.keys(rooms).length;
-	mongoTitle = 'Mongo Rooms ' + mongo.length;
+	mongoTitle.innerHTML = 'Mongo Rooms ' + mongo.length;
 	
 	clientsList.innerHTML = clientsHTML;
 	roomsList.innerHTML = roomsHTML;
