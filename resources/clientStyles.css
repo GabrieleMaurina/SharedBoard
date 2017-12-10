@@ -7,6 +7,7 @@ html, body{
 fieldset{
 	border: none;
 	background-color: #FFFFFF;
+	pointer-events: none;
 }
 
 canvas{
@@ -27,15 +28,12 @@ td{
 	left: 50%;
 	transform: translate(-50%, 0);
 	pointer-events: none;
-	z-index:-1;
 }
 
 #chat{
 	position: fixed;
 	bottom: 0px;
 	right: 0px;
-	pointer-events: none;
-	z-index:-1;
 }
 
 #chat_input{
@@ -55,8 +53,6 @@ td{
 	position: fixed;
 	top: 0px;
 	left: 0px;
-	pointer-events: none;
-	z-index:-1;
 }
 
 #title_text{
@@ -67,8 +63,6 @@ td{
 	position: fixed;
 	top: 0px;
 	right: 0px;
-	pointer-events: none;
-	z-index:-1;
 }
 
 #clients_count{
@@ -85,8 +79,6 @@ td{
 	top: 0px;
 	left: 50%;
 	transform: translate(-50%, 0);
-	pointer-events: none;
-	z-index:-1;
 }
 
 #rooms_title{
@@ -98,23 +90,24 @@ td{
 	top: 40%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-	pointer-events: none;
-	z-index:-1;
 }
 
 #clear{
 	position: fixed;
 	bottom: 0px;
 	left: 0px;
-	pointer-events: none;
-	z-index:-1;
 }
 
-#msg{
+#msg_field{
 	position: fixed;
-	top: 80%;
+	top: 75%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-	pointer-events: none;
-	z-index:-1;
+}
+
+#download{
+	position: fixed;
+	bottom: 50px;
+	left: 50%;
+	transform: translate(-50%, 0);
 }

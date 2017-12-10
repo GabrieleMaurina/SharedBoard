@@ -7,7 +7,7 @@ const CLAIM_STATES = ['(claimed)', '', '(mine)'];
 const LEFT = 1;
 const RIGHT = 3;
 
-const IDS = {CHAT : 'chat', TITLE : 'title', ROOMS : 'rooms', CLIENTS : 'clients', PALETTE : 'palette', CLEAR : 'clear', HELP : 'help'};
+const IDS = {CHAT : 'chat', TITLE : 'title', ROOMS : 'rooms', CLIENTS : 'clients', PALETTE : 'palette', CLEAR : 'clear', HELP : 'help', DOWNLOAD : 'download'};
 
 const COLORS = ['#000000', '#7F7F7F', '#880015', '#ED1C24', '#FF8927', '#FFF200', '#22B14C', '#00A2E8', '#3F48CC', '#A349AE', '#FFFFFF'];
 const C_NAMES = { BLACK : 0, GRAY : 1, DARK_RED : 2, RED : 3, ORANGE : 4, YELLOW : 5, GREEN : 6, LIGHT_BLUE : 7, BLUE : 8, PURPLE : 9, WHITE : 10 };
@@ -46,13 +46,13 @@ if('ontouchstart' in window){
 	desktop = false;
 	for(i in eles){
 		eles[i].style.pointerEvents = 'all';
-		eles[i].style.zIndex = 1;
 	}
 	document.getElementById('key_bindings').style.display = 'none';
 	document.getElementById('keys_list').style.display = 'none';
 }
 else{
 	eles.CLEAR.style.display = 'none';
+	eles.DOWNLOAD.style.display = 'none';
 }
 
 canvas.width = WIDTH;
@@ -80,6 +80,8 @@ function resizeCanvas(){
 }
 
 resizeCanvas();
+ctx.fillStyle = COLORS[C_NAMES.WHITE];
+ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 window.addEventListener('resize', resizeCanvas);
 
@@ -332,7 +334,7 @@ document.onkeyup = function(e) {
 function hideChat(){
 	typing = false;
 	chatInput.style.display = 'none';
-	eles.CHAT.style.zIndex = desktop ? -1 : 1;
+	eles.CHAT.style.zIndex = 0;
 }
 
 function submitChat(){
@@ -347,7 +349,7 @@ function showChat(){
 	typing = true;
 	chatInput.style.display = 'initial';
 	chatInput.focus();
-	eles.CHAT.style.zIndex = 2;
+	eles.CHAT.style.zIndex = 1;
 }
 
 function chatClick(){
@@ -393,6 +395,8 @@ function clear(){
 	focusCanvas();
 	
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	ctx.fillStyle = COLORS[C_NAMES.WHITE];
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
 	ctx.beginPath();
 	
 	chatLines = [];
@@ -436,14 +440,14 @@ function showName(){
 	naming = true;
 	nameInput.style.display = 'initial';
 	nameInput.focus();
-	eles.CLIENTS.style.zIndex = 2;
+	eles.CLIENTS.style.zIndex = 1;
 }
 
 function submitName(){
 	naming = false;
 	nameInput.style.display = 'none';
 	nameInput.blur();
-	eles.CLIENTS.style.zIndex = desktop ? -1 : 1;
+	eles.CLIENTS.style.zIndex = 0;
 	
 	var newName = nameInput.value;
 	newName = stripTags(newName);
@@ -505,9 +509,7 @@ var rooming = false;
 hideRoom();
 
 function submitRoom(){
-	rooming = false;
-	roomsInstruction.style.display = 'none';
-	roomsInput.style.display = 'none';
+	hideRoom();
 	
 	var newRoom = roomsInput.value;
 	newRoom = stripTags(newRoom);
@@ -516,15 +518,13 @@ function submitRoom(){
 	}
 	
 	if(newRoom != 'admin' && newRoom != room){
+		eles.ROOMS.style.zIndex = 0;
 		room = newRoom;
 		socket.emit('join', room);
 		window.history.pushState('', '', '/' + room);
 		setRoomName();
 		document.title = 'SharedBoard - ' + (room || 'HOME');
 		clear();
-		if(!desktop){
-			claimButton.style.display = 'none';
-		}
 	}
 }
 
@@ -536,8 +536,8 @@ function showRoom(){
 	rooming = true;
 	roomsInstruction.style.display = 'initial';
 	roomsInput.style.display = 'initial';
+	eles.ROOMS.style.zIndex = 1;
 	roomsInput.focus();
-	eles.ROOMS.style.zIndex = 2;
 	
 	if(!desktop){
 		claimButton.style.display = 'initial';
@@ -548,7 +548,7 @@ function hideRoom(){
 	rooming = false;
 	roomsInstruction.style.display = 'none';
 	roomsInput.style.display = 'none';
-	eles.ROOMS.style.zIndex = desktop ? -1 : 1;
+	eles.ROOMS.style.zIndex = 0;
 	
 	if(!desktop){
 		claimButton.style.display = 'none';
@@ -572,12 +572,12 @@ showHelp();
 function showHelp(){
 	helping = true;
 	help.style.display = 'initial';
-	eles.HELP.style.zIndex = 2;
+	help.style.zIndex = 1;
 }
 function hideHelp(){
 	helping = false;
 	help.style.display = 'none';
-	eles.HELP.style.zIndex = desktop ? -1 : 1;
+	help.style.zIndex = 0;
 }
 
 function helpClick(){
@@ -638,7 +638,6 @@ socket.on('updateCursor', function(cursor){
 		var img = document.createElement('img');
 		img.style.position = 'absolute';
 		img.style.pointerEvents = 'none';
-		img.style.zIndex = -1;
 		
 		document.body.appendChild(img);	
 		cursors[cursor.id] = img;
@@ -649,7 +648,6 @@ socket.on('updateCursor', function(cursor){
 		name.style.transform = 'translate(-50%, 0)';
 		
 		name.style.pointerEvents = 'none';
-		name.style.zIndex = -1;
 		
 		document.body.appendChild(name);
 		cursorsNames[cursor.id] = name;
@@ -732,4 +730,10 @@ function out(m, t){
 	}
 }
 
-out(TIPS[Math.floor(Math.random() * TIPS.length)], 3000);
+out(TIPS[Math.floor(Math.random() * TIPS.length)], 5000);
+
+function download(){
+	canvas.toBlob(function(blob) {
+		saveAs(blob, (room || 'HOME') + '.png');
+	});
+}

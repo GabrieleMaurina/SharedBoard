@@ -3,6 +3,7 @@
 		<title>SharedBoard</title>
 		<script type='text/javascript' src='socket.io.js'></script>
 		<script type='text/javascript' src='Cookies.js'></script>
+		<script type='text/javascript' src='FileSaver.js'></script>
 		<script type='text/javascript' src='address.js'></script>
 		<script type='text/javascript' src='tips.js'></script>
 		<link rel='stylesheet' href='clientStyles.css'>
@@ -29,6 +30,7 @@
 			<ul id='keys_list'>
 			  <li>Backspace / Delete - clear</li>
 			  <li>C - claim</li>
+			  <li>D - download</li>
 			  <li>Enter - chat</li>
 			  <li>H - help</li>
 			  <li>Mouse Wheel / W - color</li>
@@ -51,8 +53,7 @@
 			<h3 id='rooms_title' onclick='roomsClick()'>HOME</h3>
 			<h4 id='rooms_instruction'>Type room to join</h4>
 			<input id='rooms_input' maxlength='10' size='10'>
-			<br><br>
-			<h4 id='claim' onclick='claim()'>Or touch here to claim current room!</h4>
+			<h4 id='claim' onclick='claim()'><br><br>Or touch here to claim current room!</h4>
 		</fieldset>
 		<fieldset id='help' onclick='helpClick()'>
 			<h3>SharedBoard - Help</h3>
@@ -67,7 +68,12 @@
 		<fieldset id='clear'>
 			<h3 onclick='clearScreen()'>Clear</h3>
 		</fieldset>
-		<p id='msg'></p>
+		<fieldset id='download'>
+			<h3 onclick='download()'>Download</h3>
+		</fieldset>
+		<fieldset id='msg_field'>
+			<p id='msg'></p>
+		</fieldset>
 		<canvas id='canvas'></canvas>
 		<script src='client.js'></script>
 	</body>
