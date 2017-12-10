@@ -485,6 +485,13 @@ function focusCanvas(id){
 
 var room = stripTags(window.location.pathname.replace('/', ''));
 socket.emit('join', room);
+socket.on('reconnect', function(){
+	socket.emit('join', room);
+	out('Connected', 1000);
+});
+socket.on('disconnect', function(c){
+	out('Disconnected', 1000);
+});
 document.title = 'SharedBoard - ' + (room || 'HOME');
 
 var roomsTitle = document.getElementById('rooms_title');
@@ -514,7 +521,7 @@ function submitRoom(){
 		window.history.pushState('', '', '/' + room);
 		setRoomName();
 		document.title = 'SharedBoard - ' + (room || 'HOME');
-		clearScreen();
+		clear();
 		if(!desktop){
 			claimButton.style.display = 'none';
 		}
@@ -709,3 +716,20 @@ socket.on('claim', function(c){
 	claimed = c;
 	setRoomName();
 });
+
+var msg = document.getElementById('msg');
+var msgCounter = 0;
+function out(m, t){
+	msg.innerHTML = m;
+	msgCounter++;
+	if(t){
+		var id = msgCounter;
+		window.setTimeout(function(){
+			if(id == msgCounter){
+				msg.innerHTML = '';
+			}
+		}, t);
+	}
+}
+
+out(TIPS[Math.floor(Math.random() * TIPS.length)], 3000);

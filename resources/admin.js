@@ -8,7 +8,7 @@ var mongoList = document.getElementById('mongo_list');
 var div = document.getElementById('tables_div');
 
 function resize(){
-	if(window.innerWidth < 700){
+	if(window.innerWidth < 800){
 		div.style.display = 'inline';
 	}
 	else{
@@ -21,6 +21,13 @@ window.addEventListener('resize', resize);
 var socket = io.connect(ADDRESS);
 
 socket.emit('admin');
+socket.on('reconnect', function(){
+	socket.emit('admin');
+	out('Connected', 1000);
+});
+socket.on('disconnect', function(c){
+	out('Disconnected', 1000);
+});
 
 socket.on('update', function(update){
 	var clients = update.clients;
@@ -100,4 +107,19 @@ function switchRows(rows, i, j){
 function drop(room){
 	console.log('asdf');
 	socket.emit('clear', room);
+}
+
+var msg = document.getElementById('msg');
+var msgCounter = 0;
+function out(m, t){
+	msg.innerHTML = m;
+	msgCounter++;
+	if(t){
+		var id = msgCounter;
+		window.setTimeout(function(){
+			if(id == msgCounter){
+				msg.innerHTML = '';
+			}
+		}, t);
+	}
 }

@@ -12,7 +12,18 @@ table, th, td {
 	padding: 10px;
 }
 
-div {
+#title {
+	margin: 50px auto;
+	text-align: center;
+    border-collapse: collapse;
+}
+#msg {
+	margin: 20px auto;
+	text-align: center;
+    border-collapse: collapse;
+}
+
+#tables_div {
 	display:flex;
 	justify-content:center
 }
