@@ -8,6 +8,7 @@ fieldset{
 	border: none;
 	background-color: #FFFFFF;
 	pointer-events: none;
+	display: inline-block;
 }
 
 canvas{
