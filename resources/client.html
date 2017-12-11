@@ -10,6 +10,36 @@
 		<meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=no'>
 	</head>
 	<body>
+		<div id='rooms_div'>
+			<fieldset id='rooms'>
+				<h3 id='rooms_title' onclick='roomsClick()'>HOME</h3>
+				<h4 id='rooms_instruction'>Type room to join</h4>
+				<input id='rooms_input' maxlength='10' size='10'>
+				<h4 id='claim' onclick='claim()'><br><br>Or touch here to claim current room!</h4>
+			</fieldset>
+		</div>
+		<div id='help_div'>
+			<fieldset id='help' onclick='helpClick()'>
+				<h3>SharedBoard - Help</h3>
+				<p>
+					SharedBoard is a free website that allows people to share virtual boards.<br>
+					Feel free to join a custom room by pressing R.<br><br>
+					You can also see a list of useful commands on the top left side of the screen.<br><br>
+					Developed by Gabriele Maurina<br>
+					gabrielemaurina95@gmail.com
+				</p>
+			</fieldset>
+		</div>
+		<div id='msg_div'>
+			<fieldset id='msg_field'>
+				<p id='msg'></p>
+			</fieldset>
+		</div>
+		<div id='download_div'>
+			<fieldset id='download'>
+				<h3 onclick='download()'>Download</h3>
+			</fieldset>
+		</div>
 		<table id='palette'>
 			<tr>
 				<td id='c0' onclick='highlight(0)'></td>
@@ -49,30 +79,8 @@
 			<p id='chat_text'></p>
 			<input id='chat_input' maxlength='300'>
 		</fieldset>
-		<fieldset id='rooms'>
-			<h3 id='rooms_title' onclick='roomsClick()'>HOME</h3>
-			<h4 id='rooms_instruction'>Type room to join</h4>
-			<input id='rooms_input' maxlength='10' size='10'>
-			<h4 id='claim' onclick='claim()'><br><br>Or touch here to claim current room!</h4>
-		</fieldset>
-		<fieldset id='help' onclick='helpClick()'>
-			<h3>SharedBoard - Help</h3>
-			<p>
-				SharedBoard is a free website that allows people to share virtual boards.<br>
-				Feel free to join a custom room by pressing R.<br><br>
-				You can also see a list of useful commands on the top left side of the screen.<br><br>
-				Developed by Gabriele Maurina<br>
-				gabrielemaurina95@gmail.com
-			</p>
-		</fieldset>
 		<fieldset id='clear'>
 			<h3 onclick='clearScreen()'>Clear</h3>
-		</fieldset>
-		<fieldset id='download'>
-			<h3 onclick='download()'>Download</h3>
-		</fieldset>
-		<fieldset id='msg_field'>
-			<p id='msg'></p>
 		</fieldset>
 		<canvas id='canvas'></canvas>
 		<script src='client.js'></script>

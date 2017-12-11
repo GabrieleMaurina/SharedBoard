@@ -74,22 +74,28 @@ td{
 	word-wrap: break-word;
 }
 
-#rooms{
+#rooms_div{
 	position: fixed;
 	top: 0px;
-	left: 50%;
-	transform: translate(-50%, 0);
+	width: 100%;
+	text-align: center;
+	pointer-events: none;
 }
 
 #rooms_title{
 	text-align: center;
 }
 
-#help{
+#help_div{
 	position: fixed;
-	top: 40%;
-	left: 50%;
-	transform: translate(-50%, -50%);
+	top: 30%;
+	width: 100%;
+	text-align: center;
+	pointer-events: none;
+}
+
+#help{
+	text-align: left;
 }
 
 #clear{
@@ -98,16 +104,18 @@ td{
 	left: 0px;
 }
 
-#msg_field{
+#msg_div{
 	position: fixed;
-	top: 75%;
-	left: 50%;
-	transform: translate(-50%, -50%);
+	top: 70%;
+	width: 100%;
+	text-align: center;
+	pointer-events: none;
 }
 
-#download{
+#download_div{
 	position: fixed;
-	bottom: 50px;
-	left: 50%;
-	transform: translate(-50%, 0);
+	top: 82%;
+	width: 100%;
+	text-align: center;
+	pointer-events: none;
 }
