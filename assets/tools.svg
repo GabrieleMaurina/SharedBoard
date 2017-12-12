@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 744.09448819 1052.3622047"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="tools.svg">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="2.8"
+     inkscape:cx="130.50177"
+     inkscape:cy="22.648884"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       id="g4337"
+       inkscape:export-filename="C:\Users\Gabriele\Documents\Workspace\SharedBoard\resources\toolCurve.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90">
+      <rect
+         y="1008.1055"
+         x="97.617142"
+         height="32"
+         width="32"
+         id="rect4136"
+         style="fill:#ff0000;fill-opacity:0;stroke:none;stroke-width:40;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <path
+         inkscape:connector-curvature="0"
+         id="path4162"
+         d="m 101.43155,1026.8069 c -0.01,-1.4384 0.26307,-2.8515 0.34248,-4.2809 0.12085,-2.1752 3.41761,-7.9421 5.99335,-5.0801 2.77597,3.0845 -2.55823,16.974 4.45221,16.0394 3.88546,-0.5181 6.65882,-9.4049 9.36104,-12.5575 1.4981,-1.7478 3.22293,-1.1434 4.85176,-2.5686"
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:3.61637473;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    </g>
+    <g
+       id="g4341"
+       inkscape:export-filename="C:\Users\Gabriele\Documents\Workspace\SharedBoard\resources\toolStraight.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90">
+      <rect
+         y="1008.4626"
+         x="136.90285"
+         height="32"
+         width="32"
+         id="rect4136-8"
+         style="fill:#ff0000;fill-opacity:0;stroke:none;stroke-width:40;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <path
+         sodipodi:nodetypes="cc"
+         inkscape:connector-curvature="0"
+         id="path4183"
+         d="m 140.90285,1036.4626 c 0.71429,-0.5357 24,-24 24,-24"
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    </g>
+    <g
+       id="g4333"
+       inkscape:export-filename="C:\Users\Gabriele\Documents\Workspace\SharedBoard\resources\toolSquare.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90">
+      <rect
+         y="1007.7484"
+         x="53.331429"
+         height="32"
+         width="32"
+         id="rect4136-8-66"
+         style="fill:#ff0000;fill-opacity:0;stroke:none;stroke-width:40;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <rect
+         y="1013.7482"
+         x="59.33131"
+         height="20.000233"
+         width="20.000235"
+         id="rect4214"
+         style="fill:none;fill-opacity:0.56647399;stroke:#000000;stroke-width:3.99976611;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    </g>
+    <g
+       id="g4345"
+       inkscape:export-filename="C:\Users\Gabriele\Documents\Workspace\SharedBoard\resources\toolArrow.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90">
+      <rect
+         y="1009.2505"
+         x="173.24117"
+         height="32"
+         width="32"
+         id="rect4136-8-4"
+         style="fill:#ff0000;fill-opacity:0;stroke:none;stroke-width:40;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <path
+         sodipodi:nodetypes="cc"
+         inkscape:connector-curvature="0"
+         id="path4183-2"
+         d="m 177.24116,1037.2505 22,-22"
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <path
+         sodipodi:nodetypes="ccc"
+         inkscape:connector-curvature="0"
+         id="path4257"
+         d="m 198.24116,1029.2505 1,-14 -14,1"
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    </g>
+    <g
+       id="g4350"
+       inkscape:export-filename="C:\Users\Gabriele\Documents\Workspace\SharedBoard\resources\toolCircle.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90">
+      <rect
+         y="1008.9984"
+         x="211.90285"
+         height="32"
+         width="32"
+         id="rect4136-8-6-3"
+         style="fill:#ff0000;fill-opacity:0;stroke:none;stroke-width:40;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <circle
+         r="10.00016"
+         cy="1024.9983"
+         cx="227.90285"
+         id="path4279"
+         style="fill:none;fill-opacity:0.56647399;stroke:#000000;stroke-width:3.99967885;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    </g>
+    <g
+       id="g4328"
+       inkscape:export-filename="C:\Users\Gabriele\Documents\Workspace\SharedBoard\resources\toolText.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90">
+      <rect
+         y="1007.486"
+         x="12.659028"
+         height="32"
+         width="32"
+         id="rect4136-8-6"
+         style="fill:#ff0000;fill-opacity:0;stroke:none;stroke-width:40;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text4305"
+         y="1036.2094"
+         x="16.696136"
+         style="font-style:normal;font-weight:normal;font-size:35px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         xml:space="preserve"><tspan
+           y="1036.2094"
+           x="16.696136"
+           id="tspan4307"
+           sodipodi:role="line">A</tspan></text>
+    </g>
+  </g>
+</svg>

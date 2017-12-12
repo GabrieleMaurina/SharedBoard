@@ -15,7 +15,50 @@ canvas{
 	cursor: url(cursor.png) 16 16, crosshair;
 }
 
-td{
+#tools{
+	position: fixed;
+	top: 40%;
+	left: 1%;
+}
+
+.t_cell{
+	display: block;
+	width: 30px;
+	height: 30px;
+    border: 4px solid #FFFFFF;
+	background-color: #FFFFFF;
+	overflow: hidden;
+}
+
+#t1{
+	background-image: url(toolCurve.png);
+}
+#t2{
+	background-image: url(toolStraight.png);
+}
+#t3{
+	background-image: url(toolArrow.png);
+}
+#t4{
+	background-image: url(toolSquare.png);
+}
+#t5{
+	background-image: url(toolCircle.png);
+}
+#t6{
+	background-image: url(toolText.png);
+}
+
+#tr0{
+	display: block;
+	padding-bottom: 10px;
+}
+#tr7{
+	display: block;
+	padding-top: 10px;
+}
+
+.p_cell{
 	width: 30px;
 	height: 38px;
     border: 4px solid #000000;
