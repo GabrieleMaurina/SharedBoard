@@ -56,14 +56,14 @@
 		</table>
 		<table id='tools'>
 			<tbody>
-				<tr id='tr0' ><td id='t0' class='t_cell'></td></tr>
-				<tr><td id='t1' class='t_cell'></td></tr>
-				<tr><td id='t2' class='t_cell'></td></tr>
-				<tr><td id='t3' class='t_cell'></td></tr>
-				<tr><td id='t4' class='t_cell'></td></tr>
-				<tr><td id='t5' class='t_cell'></td></tr>
-				<tr><td id='t6' class='t_cell'></td></tr>
-				<tr id='tr7'><td id='t7' class='t_cell'></td></tr>
+				<tr id='tr0' ><td id='t0' class='t_cell' onclick='setSize()'></td></tr>
+				<tr><td id='t1' class='t_cell' onclick='setTool(0)'></td></tr>
+				<tr><td id='t2' class='t_cell' onclick='setTool(1)'></td></tr>
+				<tr><td id='t3' class='t_cell' onclick='setTool(2)'></td></tr>
+				<tr><td id='t4' class='t_cell' onclick='setTool(3)'></td></tr>
+				<tr><td id='t5' class='t_cell' onclick='setTool(4)'></td></tr>
+				<tr><td id='t6' class='t_cell' onclick='setTool(5)'></td></tr>
+				<tr id='tr7'><td id='t7' class='t_cell' onclick='setWhite()'></td></tr>
 			</tbody>
 		</table>
 		<fieldset id='title'>
@@ -71,14 +71,15 @@
 			<h4 id='key_bindings'>Key bindings</h4>
 			<ul id='keys_list'>
 			  <li>Backspace / Delete - clear</li>
-			  <li>C - claim</li>
+			  <li>C / Wheel - color</li>
 			  <li>D - download</li>
 			  <li>Enter - chat</li>
 			  <li>H - help</li>
-			  <li>Mouse Wheel / W - color</li>
+			  <li>M - mine</li>
 			  <li>N - name</li>
 			  <li>R - room</li>
 			  <li>Right click - white</li>
+			  <li>T / Shift + Wheel - tool</li>
 			</ul>
 		</fieldset>
 		<fieldset id='clients'>

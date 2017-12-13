@@ -17,24 +17,26 @@ canvas{
 
 #tools{
 	position: fixed;
-	top: 40%;
+	top: 42%;
 	left: 1%;
+	pointer-events: none;
 }
 
 .t_cell{
 	display: block;
 	width: 30px;
 	height: 30px;
-    border: 4px solid #FFFFFF;
+    border: 4px solid #000000;
 	background-color: #FFFFFF;
 	overflow: hidden;
 }
 
+
 #t1{
-	background-image: url(toolCurve.png);
+	background-image: url(toolStraight.png);
 }
 #t2{
-	background-image: url(toolStraight.png);
+	background-image: url(toolCurve.png);
 }
 #t3{
 	background-image: url(toolArrow.png);
@@ -51,11 +53,11 @@ canvas{
 
 #tr0{
 	display: block;
-	padding-bottom: 10px;
+	padding-bottom: 20px;
 }
 #tr7{
 	display: block;
-	padding-top: 10px;
+	padding-top: 20px;
 }
 
 .p_cell{

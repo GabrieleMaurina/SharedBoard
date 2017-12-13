@@ -7,7 +7,7 @@ const CLAIM_STATES = ['(claimed)', '', '(mine)'];
 const LEFT = 1;
 const RIGHT = 3;
 
-const IDS = {CHAT : 'chat', TITLE : 'title', ROOMS : 'rooms', CLIENTS : 'clients', PALETTE : 'palette', CLEAR : 'clear', HELP : 'help', DOWNLOAD : 'download'};
+const IDS = {CHAT : 'chat', TITLE : 'title', ROOMS : 'rooms', CLIENTS : 'clients', PALETTE : 'palette', CLEAR : 'clear', HELP : 'help', DOWNLOAD : 'download', TOOLS : 'tools'};
 
 const COLORS = ['#000000', '#7F7F7F', '#880015', '#ED1C24', '#FF8927', '#FFF200', '#22B14C', '#00A2E8', '#3F48CC', '#A349AE', '#FFFFFF'];
 const C_NAMES = { BLACK : 0, GRAY : 1, DARK_RED : 2, RED : 3, ORANGE : 4, YELLOW : 5, GREEN : 6, LIGHT_BLUE : 7, BLUE : 8, PURPLE : 9, WHITE : 10 };
@@ -76,6 +76,10 @@ function resizeCanvas(){
 	else{
 		eles.CHAT.style.bottom = '0px';
 		eles.CLEAR.style.bottom = '0px';
+	}
+	
+	if(tools){
+		tools[0].style.backgroundImage = 'url(' + createCursor(C_NAMES.BLACK) + ')';
 	}
 }
 
@@ -311,7 +315,7 @@ document.onkeyup = function(e) {
 			clearScreen();
 		}
 		else if (e.key == 'c' || e.key == 'C'){
-			claim();
+			highlight((color + 1) % 10);
 		}
 		else if (e.key == 'Enter'){
 			showChat();
@@ -319,15 +323,28 @@ document.onkeyup = function(e) {
 		else if (e.key == 'h' || e.key == 'H'){
 			showHelp();
 		}
+		else if (e.key == 'm' || e.key == 'M'){
+			claim();
+		}
 		else if (e.key == 'n' || e.key == 'N'){
 			showName();
 		}
 		else if (e.key == 'r' || e.key == 'R'){
 			showRoom();
 		}
-		else if (e.key == 'w' || e.key == 'W'){
-			highlight((color + 1) % 10);
+		else if (e.key == 't' || e.key == 'T'){
+			setTool((tool + 1) % 6);
 		}
+	}
+	
+	if (e.key == 'Shift'){
+		shift = false;
+	}
+};
+
+document.onkeydown = function(e) {
+	if (e.key == 'Shift'){
+		shift = true;
 	}
 };
 
@@ -615,13 +632,23 @@ function highlight(i){
 		makeCursor(color);
 	}
 }
-
+var shift = false;
 canvas.addEventListener('mousewheel', function (e) {
 	if(e.wheelDelta > 0){
-		highlight((color + 1) % 10);
+		if(shift){
+			setTool((tool + 1) % 6);
+		}
+		else{
+			highlight((color + 1) % 10);
+		}
 	}
 	else{
-		highlight((color + 9) % 10);
+		if(shift){
+			setTool((tool + 5) % 6);
+		}
+		else{
+			highlight((color + 9) % 10);
+		}
 	}
 }, false);
 
@@ -708,6 +735,9 @@ function claim(){
 	if(room){
 		socket.emit('claim');
 	}
+	else{
+		out('You cannot claim the home page.', 3000);
+	}
 }
 
 socket.on('claim', function(c){
@@ -736,4 +766,36 @@ function download(){
 	canvas.toBlob(function(blob) {
 		saveAs(blob, (room || 'HOME') + '.png');
 	});
+}
+
+var tools = [];
+for(var i = 0; i < 8; i++){
+	tools.push(document.getElementById('t' + i));
+	tools[i].style.border = '4px solid ' + COLORS[C_NAMES.WHITE];
+}
+
+tools[0].style.border = '4px solid ' + COLORS[C_NAMES.BLACK];
+tools[0].style.backgroundImage = 'url(' + createCursor(C_NAMES.BLACK) + ')';
+
+tools[7].style.border = '1px solid ' + COLORS[C_NAMES.BLACK];
+if(desktop){
+	tools[7].style.display = 'none';
+}
+else{
+	eles.TOOLS.style.top = '20%';
+}
+
+var tool = 1;
+setTool(0);
+
+function setTool(i){
+	if(i != tool){
+		if(tools[tool + 1]){
+			tools[tool + 1].style.border = '4px solid ' + COLORS[C_NAMES.WHITE];
+		}
+		tool = i;
+		if(tools[tool + 1]){
+			tools[tool + 1].style.border = '4px solid ' + COLORS[C_NAMES.BLACK];
+		}
+	}
 }
