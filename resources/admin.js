@@ -53,7 +53,7 @@ socket.on('update', function(update){
 	}
 	
 	for(i in mongo){
-		mongoHTML += '<tr><td><a href="' + (mongo[i].room || ADDRESS) + '">' + (mongo[i].room || 'HOME') + '</a></td><td>' + mongo[i].documents + '</td><td onclick=\'drop("' + mongo[i].room + '")\' id="clickable"><font color="#ED1C24">DROP</font></td></tr>';
+		mongoHTML += '<tr><td><a href="' + (mongo[i].room || ADDRESS) + '">' + (mongo[i].room || 'HOME') + '</a></td><td>' + mongo[i].documents + '</td><td>' + mongo[i].lastUpdate + '</td><td onclick=\'drop("' + mongo[i].room + '")\' id="clickable"><font color="#ED1C24">DROP</font></td></tr>';
 	}
 	
 	clientsTitle.innerHTML = 'Clients ' + clients.length;

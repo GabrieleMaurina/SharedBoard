@@ -19,7 +19,7 @@
   "homepage": "https://github.com/GabrieleMaurina/SharedBoard#readme",
   "dependencies": {
     "express": "^4.16.2",
-    "mongoose": "^4.13.6",
+    "mongoose": "^4.13.7",
     "socket.io": "^2.0.4",
     "striptags": "^3.1.1"
   }

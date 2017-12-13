@@ -210,9 +210,9 @@ function sendUpdate(){
 		clients.push(c);
 	}
 	
-	Update.aggregate([{$group: {_id: '$room', documents: {$sum: 1}}}]).exec(function(err, res){
+	Update.aggregate([{$group: {_id: '$room', documents: {$sum: 1}, "lastUpdate": {$max:"$date"}}}]).exec(function(err, res){
 		for(i in res){
-			mongo.push({room : res[i]._id, documents : res[i].documents});
+			mongo.push({room : res[i]._id, documents : res[i].documents, lastUpdate : res[i].lastUpdate});
 		}
 		
 		update.clients = clients;
