@@ -23,7 +23,7 @@ const MSG_PER_SEC = 20;
 const WIDTH = 2000;
 const HEIGHT = 2000;
 
-const LINE_WIDTH = 10;
+const LINE_WIDTHS = [4, 10, 16];
 
 const CURSOR_WIDTH = 32;
 const HALF_CURSOR_WIDTH = CURSOR_WIDTH / 2;
@@ -59,7 +59,16 @@ canvas.width = WIDTH;
 canvas.height = HEIGHT;
 
 ctx = canvas.getContext('2d');
-ctx.lineWidth = LINE_WIDTH;
+
+var size = 0;
+function setSize(){
+	size = (size + 1) % 3;
+	makeCursor(color);
+	if(tools){
+		tools[0].style.backgroundImage = 'url(' + createCursor(C_NAMES.BLACK, size) + ')';
+	}
+}
+setSize();
 
 function resizeCanvas(){
 	X_RATIO = window.innerWidth / WIDTH;
@@ -79,7 +88,7 @@ function resizeCanvas(){
 	}
 	
 	if(tools){
-		tools[0].style.backgroundImage = 'url(' + createCursor(C_NAMES.BLACK) + ')';
+		tools[0].style.backgroundImage = 'url(' + createCursor(C_NAMES.BLACK, size) + ')';
 	}
 }
 
@@ -99,6 +108,7 @@ var lastMouseColor = C_NAMES.WHITE;
 
 var lastColor = C_NAMES.WHITE;
 var beforeWhite = C_NAMES.WHITE;
+var lastSize = size;
 
 var mouseButton = 0;
 
@@ -123,7 +133,12 @@ canvas.addEventListener('mousedown', function (e) {
 			lastColor = color;
 		}
 		
-		point(p, color);
+		if(lastSize != size){
+			p.size = size;
+			lastSize = size;
+		}
+		
+		point(p, color, size);
 		
 		lines.push([p]);
 	}
@@ -135,7 +150,7 @@ canvas.addEventListener('mouseup', function (e) {
 			mouseButton = 0;
 			
 			drawing = false;
-			point(p, color);
+			point(p, color, size);
 			
 			if(e.which == RIGHT){
 				highlight(beforeWhite);
@@ -160,8 +175,13 @@ canvas.addEventListener('mousemove', function (e) {
 					lastColor = color;
 				}
 				
-				line(lP, p, color);
-				point(p, color);
+				if(lastSize != size){
+					p.size = size;
+					lastSize = size;
+				}
+				
+				line(lP, p, color, size);
+				point(p, color, size);
 				
 				if(lines.length > 0) {
 					lines[lines.length - 1].push(p);
@@ -222,20 +242,27 @@ document.body.addEventListener('touchmove', function (e) {
 var socket = io.connect(ADDRESS);
 socket.on('lines', function(lines){
 	var c = C_NAMES.BLACK;
+	var s = 1;
 	for (i in lines) {
 		for(var j = 0; j < lines[i].length - 1; j++) {
 			if(lines[i][j].color != undefined){
 				c = lines[i][j].color;
 			}
-			point(lines[i][j], c);
-			line(lines[i][j], lines[i][j + 1], c);
+			if(lines[i][j].size != undefined){
+				s = lines[i][j].size;
+			}
+			point(lines[i][j], c, s);
+			line(lines[i][j], lines[i][j + 1], c, s);
 		}
 		
 		if(lines[i].length > 0) {
 			if(lines[i][j].color != undefined){
 				c = lines[i][j].color;
 			}
-			point(lines[i][lines[i].length - 1], c);
+			if(lines[i][j].size != undefined){
+				s = lines[i][j].size;
+			}
+			point(lines[i][lines[i].length - 1], c, s);
 		}
 	}
 });
@@ -248,6 +275,11 @@ function sendLines(){
 			if(toSend[0][0].color == undefined){
 				toSend[0][0].color = color;
 			}
+			
+			if(toSend[0][0].size == undefined){
+				toSend[0][0].size = size;
+			}
+			
 			socket.emit('lines', toSend);
 		}
 	}
@@ -259,16 +291,18 @@ function sendLines(){
 	sendCursor();
 })();
 
-function point(p, c)
+function point(p, c, s)
 {
-	var width = Math.round(LINE_WIDTH * 0.8);
+	var width = Math.round(LINE_WIDTHS[s] * 0.8);
 	
 	ctx.fillStyle = COLORS[c];
 	ctx.fillRect(p.x - width / 2, p.y - width / 2, width, width);
 }
 
-function line(p0, p1, c)
+function line(p0, p1, c, s)
 {
+	console.log(s);
+	ctx.lineWidth = LINE_WIDTHS[s];
 	ctx.strokeStyle = COLORS[c];
 	ctx.beginPath();
 	ctx.moveTo(p0.x, p0.y);
@@ -334,6 +368,9 @@ document.onkeyup = function(e) {
 		}
 		else if (e.key == 't' || e.key == 'T'){
 			setTool((tool + 1) % 6);
+		}
+		else if (e.key == 'w' || e.key == 'W'){
+			setSize();
 		}
 	}
 	
@@ -653,7 +690,7 @@ canvas.addEventListener('mousewheel', function (e) {
 }, false);
 
 function makeCursor(color) {
-	canvas.style.cursor = 'url(' + createCursor(color) + ') ' + HALF_CURSOR_WIDTH + ' '  + HALF_CURSOR_WIDTH + ', auto';
+	canvas.style.cursor = 'url(' + createCursor(color, size) + ') ' + HALF_CURSOR_WIDTH + ' '  + HALF_CURSOR_WIDTH + ', auto';
 }
 
 var cursors = {};
@@ -688,8 +725,8 @@ socket.on('updateCursor', function(cursor){
 		cursorsNames[cursor.id].style.top = (cursor.y * Y_RATIO + rect.top - CURSOR_WIDTH) + 'px';
 		cursors[cursor.id].style.top = (cursor.y * Y_RATIO + rect.top - HALF_CURSOR_WIDTH) + 'px';
 	}
-	if(cursor.color != undefined){
-		cursors[cursor.id].src = createCursor(cursor.color);
+	if(cursor.color != undefined && cursor.size != undefined){
+		cursors[cursor.id].src = createCursor(cursor.color, cursor.size);
 		cursorsNames[cursor.id].style.color = COLORS[cursor.color];
 	}
 	cursorsNames[cursor.id].innerHTML = cursor.name || 'Unknown';
@@ -715,7 +752,7 @@ function sendCursor(){
 	}
 }
 
-function createCursor(c){	
+function createCursor(c, w){	
 	var can = document.createElement('canvas');
 	var ctx = can.getContext('2d');
 	
@@ -724,7 +761,7 @@ function createCursor(c){
 	
 	ctx.fillStyle = COLORS[c];
 	
-	ctx.fillRect(HALF_CURSOR_WIDTH - LINE_WIDTH * X_RATIO / 2, HALF_CURSOR_WIDTH - LINE_WIDTH * Y_RATIO / 2, LINE_WIDTH * X_RATIO, LINE_WIDTH * Y_RATIO);
+	ctx.fillRect(HALF_CURSOR_WIDTH - LINE_WIDTHS[w] * X_RATIO / 2, HALF_CURSOR_WIDTH - LINE_WIDTHS[w] * Y_RATIO / 2, LINE_WIDTHS[w] * X_RATIO, LINE_WIDTHS[w] * Y_RATIO);
 	
 	return can.toDataURL();
 }
@@ -746,15 +783,18 @@ socket.on('claim', function(c){
 });
 
 var msg = document.getElementById('msg');
+var msgField = document.getElementById('msg_field');
 var msgCounter = 0;
 function out(m, t){
 	msg.innerHTML = m;
+	msgField.style.display = 'initial';
 	msgCounter++;
 	if(t){
 		var id = msgCounter;
 		window.setTimeout(function(){
 			if(id == msgCounter){
 				msg.innerHTML = '';
+				msgField.style.display = 'none';
 			}
 		}, t);
 	}
@@ -775,7 +815,7 @@ for(var i = 0; i < 8; i++){
 }
 
 tools[0].style.border = '4px solid ' + COLORS[C_NAMES.BLACK];
-tools[0].style.backgroundImage = 'url(' + createCursor(C_NAMES.BLACK) + ')';
+tools[0].style.backgroundImage = 'url(' + createCursor(C_NAMES.BLACK, size) + ')';
 
 tools[7].style.border = '1px solid ' + COLORS[C_NAMES.BLACK];
 if(desktop){
