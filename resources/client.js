@@ -558,6 +558,7 @@ socket.on('disconnect', function(c){
 });
 document.title = 'SharedBoard - ' + (room || 'HOME');
 
+var rooms_div = document.getElementById('rooms_div');
 var roomsTitle = document.getElementById('rooms_title');
 var roomsInstruction = document.getElementById('rooms_instruction');
 var roomsInput = document.getElementById('rooms_input');
@@ -597,6 +598,7 @@ function showRoom(){
 	roomsInstruction.style.display = 'initial';
 	roomsInput.style.display = 'initial';
 	eles.ROOMS.style.zIndex = 1;
+	rooms_div.style.zIndex = 1;
 	roomsInput.focus();
 	
 	if(!desktop){
@@ -609,6 +611,7 @@ function hideRoom(){
 	roomsInstruction.style.display = 'none';
 	roomsInput.style.display = 'none';
 	eles.ROOMS.style.zIndex = 0;
+	rooms_div.style.zIndex = 0;
 	
 	if(!desktop){
 		claimButton.style.display = 'none';

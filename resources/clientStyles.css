@@ -160,7 +160,7 @@ canvas{
 
 #download_div{
 	position: fixed;
-	top: 82%;
+	bottom: 50px;
 	width: 100%;
 	text-align: center;
 	pointer-events: none;
