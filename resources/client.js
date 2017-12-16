@@ -117,7 +117,7 @@ canvas.addEventListener('mousedown', function (e) {
 	if(claimed){
 		mouseButton = e.which;
 		
-		if(e.which == RIGHT){
+		if(e.which == RIGHT || white){
 			highlight(C_NAMES.WHITE);
 		}
 		else if(e.which == LEFT){
@@ -138,6 +138,11 @@ canvas.addEventListener('mousedown', function (e) {
 			lastSize = size;
 		}
 		
+		if(lines.length == 0){
+			p.color = color;
+			p.size = size;
+		}
+		
 		point(p, color, size);
 		
 		lines.push([p]);
@@ -152,7 +157,7 @@ canvas.addEventListener('mouseup', function (e) {
 			drawing = false;
 			point(p, color, size);
 			
-			if(e.which == RIGHT){
+			if(e.which == RIGHT || white){
 				highlight(beforeWhite);
 			}
 		}
@@ -187,6 +192,8 @@ canvas.addEventListener('mousemove', function (e) {
 					lines[lines.length - 1].push(p);
 				}
 				else {
+					p.color = color;
+					p.size = size;
 					lines.push([lP, p]);
 				}
 			}
@@ -301,7 +308,6 @@ function point(p, c, s)
 
 function line(p0, p1, c, s)
 {
-	console.log(s);
 	ctx.lineWidth = LINE_WIDTHS[s];
 	ctx.strokeStyle = COLORS[c];
 	ctx.beginPath();
@@ -837,5 +843,17 @@ function setTool(i){
 		if(tools[tool + 1]){
 			tools[tool + 1].style.border = '4px solid ' + COLORS[C_NAMES.BLACK];
 		}
+	}
+}
+
+var white = false;
+
+function setWhite(){
+	white = !white;
+	if(white){
+		tools[7].style.border = '4px solid ' + COLORS[C_NAMES.BLACK];
+	}
+	else{
+		tools[7].style.border = '1px solid ' + COLORS[C_NAMES.BLACK];
 	}
 }
