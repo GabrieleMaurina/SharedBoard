@@ -828,7 +828,7 @@ if(desktop){
 	tools[7].style.display = 'none';
 }
 else{
-	eles.TOOLS.style.top = '20%';
+	eles.TOOLS.style.top = '15%';
 }
 
 var tool = 1;
